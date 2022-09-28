@@ -93,13 +93,13 @@ export const LotteryProvider = ({ children }: Props) => {
       const { provider, signer, transactionContarct } = getEthereumContarct();
 
       // Note: this is a string, e.g. user input
-      const parsedAmount = ethers.utils.parseEther(formData.amount);
+      const parsedAmount = ethers.utils.parseEther("0.5");
       await ethereum.request({
         method: "eth_sendTransaction",
         params: [
           {
             from: connectedAccount,
-            // to: formData.address,
+            to: transactionContarct.address,
             gas: "0x5208",
             value: parsedAmount._hex,
           },
