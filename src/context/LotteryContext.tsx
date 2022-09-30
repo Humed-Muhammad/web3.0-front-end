@@ -28,8 +28,6 @@ const getEthereumContarct = () => {
     signer
   );
   console.log({
-    provider,
-    signer,
     transactionContarct,
   });
   return {
@@ -93,7 +91,8 @@ export const LotteryProvider = ({ children }: Props) => {
       const { provider, signer, transactionContarct } = getEthereumContarct();
 
       // Note: this is a string, e.g. user input
-      const parsedAmount = ethers.utils.parseEther("0.5");
+      const parsedAmount = ethers.utils.parseEther("0.05");
+      console.log(parsedAmount, parsedAmount._hex);
       await ethereum.request({
         method: "eth_sendTransaction",
         params: [

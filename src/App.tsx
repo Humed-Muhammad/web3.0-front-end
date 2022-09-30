@@ -1,15 +1,24 @@
-import { Container, Flex } from "@chakra-ui/react";
-import { useState } from "react";
-import { Navbar } from "./components/Navbar";
+import { Flex } from "@chakra-ui/react";
+
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import React from "react";
 import { Home } from "./page/Home";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <Flex direction="column" height="100vh" width="full" justify="center">
-      <Home />
-    </Flex>
+    <BrowserRouter>
+      <Flex
+        direction="column"
+        height="auto"
+        overflow="auto"
+        width="full"
+        justify="center"
+      >
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </Flex>
+    </BrowserRouter>
   );
 }
 
