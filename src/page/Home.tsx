@@ -1,12 +1,28 @@
-import React, { useContext } from "react";
+import React, { useEffect } from "react";
 import { Flex, Heading } from "@chakra-ui/react";
-import { LotteryContext } from "../context/LotteryContext";
+// import { LotteryContext } from "../context/LotteryContext";
 import { Lottery } from "../components/Lottery";
 import { TableDataTypes } from "../utils/types";
+import { useDispatch } from "react-redux";
+import { actions } from "../store/slice";
 
 export const Home = () => {
-  const { connectWallet, connectedAccount, isLoading, sendFunds } =
-    useContext(LotteryContext);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      dispatch(actions.checkIfWalletIsConnected());
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  useEffect(() => {
+    dispatch(actions.requestContarct());
+    dispatch(actions.requestPlayers());
+  }, []);
 
   const data: TableDataTypes[] = [
     {
