@@ -1,4 +1,4 @@
 export interface TableDataTypes {
-    address: string;
-    timestamp: string;
-  }
+  address?: string;
+  timestamp?: Date;
+}

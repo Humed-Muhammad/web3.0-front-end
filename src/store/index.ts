@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
-import { lotterySaga } from "./saga";
-import { reducers } from "./slice";
+import rootSaga from "./rootSaga";
+import { reducers } from "./rootReducer";
 
 const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
@@ -13,7 +13,7 @@ export const store = configureStore({
     }).concat(sagaMiddleware),
 });
 
-sagaMiddleware.run(lotterySaga);
+sagaMiddleware.run(rootSaga);
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}

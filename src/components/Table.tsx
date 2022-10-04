@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { TableDataTypes } from "../utils/types";
 import styled from "@emotion/styled";
+import { dateFormater } from "../utils";
 
 interface Props {
   data: TableDataTypes[];
@@ -19,15 +20,15 @@ const StyledTableContainer = styled(TableContainer)({
   "::-webkit-scrollbar": {
     height: "5px",
     width: "5px",
-    display: "none",
+    // display: "none",
   },
-  //   "::-webkit-scrollbar-track": {
-  //     background: "#f1f1f1",
-  //   },
+  "::-webkit-scrollbar-track": {
+    background: "#f1f1f1",
+  },
 
-  //   "::-webkit-scrollbar-thumb": {
-  //     background: "none",
-  //   },
+  "::-webkit-scrollbar-thumb": {
+    background: "gray",
+  },
 });
 
 export const ChakraTable = ({ data }: Props) => {
@@ -50,9 +51,9 @@ export const ChakraTable = ({ data }: Props) => {
 
         <Tbody rounded={"md"} shadow="sm">
           {data.map((item, index) => (
-            <Tr key={item.address + index}>
+            <Tr key={item?.address}>
               <Td>{item.address}</Td>
-              <Td maxW="16">{item.timestamp}</Td>
+              <Td>{item?.timestamp ? dateFormater(item?.timestamp) : ""}</Td>
             </Tr>
           ))}
         </Tbody>

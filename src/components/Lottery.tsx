@@ -2,6 +2,7 @@ import React from "react";
 import {
   Alert,
   AlertIcon,
+  AlertStatus,
   Box,
   Button,
   Flex,
@@ -14,23 +15,38 @@ import { BiHistory } from "react-icons/bi";
 import Lottie from "react-lottie";
 import lottie404 from "../assets/lottery-json.json";
 import { useDispatch, useSelector } from "react-redux";
+
+import { actions } from "../store/Daily/slice";
+import { actions as defaultActions } from "../store/defaultSlice/slice";
 import {
   selectConnectedAccount,
+  selectConnectingWallet,
   selectMessage,
-  selectSendingFunds,
-} from "../store/slice/selector";
-import { actions } from "../store/slice";
+} from "../store/defaultSlice/slice/selector";
+import { selectDailySendingFunds } from "../store/Daily/slice/selector";
 
 interface Props {
-  data: TableDataTypes[];
+  data: TableDataTypes[] | undefined;
   title: string;
   openModal?: () => void;
+  bettingValue: number | undefined;
+  previouseWinners: [] | undefined;
+  lotteryPrize: string | undefined;
 }
-export const Lottery = ({ data, openModal, title }: Props) => {
+export const Lottery = ({
+  data,
+  openModal,
+  title,
+  bettingValue,
+  lotteryPrize,
+  previouseWinners,
+}: Props) => {
   const dispatch = useDispatch();
   const message = useSelector(selectMessage);
   const connectedAccount = useSelector(selectConnectedAccount);
-  const sendingFunds = useSelector(selectSendingFunds);
+  const isSendingFunds = useSelector(selectDailySendingFunds);
+  const connectingWallet = useSelector(selectConnectingWallet);
+
   const lottieDefaultOptions = {
     loop: true,
     autoplay: true,
@@ -42,7 +58,7 @@ export const Lottery = ({ data, openModal, title }: Props) => {
   return (
     <Box w="full">
       {message.content ? (
-        <Alert status={message.type}>
+        <Alert status={message.type as AlertStatus}>
           <AlertIcon />
           There was an error processing your request
         </Alert>
@@ -73,7 +89,7 @@ export const Lottery = ({ data, openModal, title }: Props) => {
               <BiHistory size={25} color="#319795" />
             </Flex>
           </Flex>
-          <ChakraTable data={data} />
+          {data ? <ChakraTable data={data} /> : "Loding..."}
         </Box>
         <Box
           display="flex"
@@ -87,18 +103,18 @@ export const Lottery = ({ data, openModal, title }: Props) => {
           <Box experimental_spaceY="12">
             <Flex experimental_spaceX="12">
               <Text>Current betting value</Text>
-              <Text fontWeight="bold">0.05 ETH</Text>
+              <Text fontWeight="bold">{bettingValue} ETH</Text>
             </Flex>
             <Flex experimental_spaceX="12">
               <Text>Total winners count</Text>
-              <Text fontWeight="bold">10</Text>
+              <Text fontWeight="bold">{previouseWinners?.length}</Text>
             </Flex>
           </Box>
           {connectedAccount ? (
             <Button
-              isLoading={sendingFunds}
+              isLoading={isSendingFunds}
               onClick={() => {
-                dispatch(actions.sendingFunds());
+                dispatch(actions.sendFunds());
               }}
               h="9"
               py="2"
@@ -110,8 +126,9 @@ export const Lottery = ({ data, openModal, title }: Props) => {
             </Button>
           ) : (
             <Button
+              isLoading={connectingWallet}
               onClick={() => {
-                dispatch(actions.requestWalletConnection());
+                dispatch(defaultActions.requestWalletConnection());
               }}
               h="9"
               py="2"
@@ -130,7 +147,7 @@ export const Lottery = ({ data, openModal, title }: Props) => {
           justify="flex-end"
           align="center"
         >
-          <Heading fontSize="lg">0.60 ETH</Heading>
+          <Heading fontSize="lg">{lotteryPrize} ETH</Heading>
           <Text fontSize="md" color="gray.500">
             Lottery Prize
           </Text>
