@@ -89,7 +89,7 @@ export const Lottery = ({
               <BiHistory size={25} color="#319795" />
             </Flex>
           </Flex>
-          {data ? <ChakraTable data={data} /> : "Loding..."}
+          <ChakraTable data={data ? Array.from(data).reverse() : []} />
         </Box>
         <Box
           display="flex"
