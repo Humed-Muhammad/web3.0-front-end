@@ -4,12 +4,12 @@ import { actions as defaultActions } from "../../defaultSlice/slice";
 import { BigNumber, ethers, ContractTransaction } from "ethers";
 
 import {
-  DailyContractTypes,
+  ContractListTypes,
   DefaultLotteryTypes,
 } from "../../defaultSlice/slice/types";
 import {
   selectConnectedAccount,
-  selectDailyContarct,
+  selectContracts,
   selectLotteryDatas,
 } from "../../defaultSlice/slice/selector";
 
@@ -17,39 +17,18 @@ interface EtherWindow extends Window {
   ethereum?: any;
 }
 
-// function* requestPlayersSaga() {
-//   try {
-//     const { ethereum }: EtherWindow = yield window;
-//     if (!ethereum) return alert("Please install metamask!");
-//     const { contract }: ContractTypes = yield select(selectContarct);
-//     const players: string[] = yield contract?.getPlayers();
-//     // yield put(actions.setPlayers(players))
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
-
 function* sendingFundsSaga() {
   const connectedAccount: string = yield select(selectConnectedAccount);
   try {
-    yield put(
-      defaultActions.setMessages({
-        content: "",
-        type: null,
-      })
-    );
     const { ethereum }: EtherWindow = yield window;
     if (!ethereum) return alert("Please install metamask!");
-    const { dailyContract }: DailyContractTypes = yield select(
-      selectDailyContarct
-    );
+    const { dailyContract }: ContractListTypes = yield select(selectContracts);
     const defaultLotteryData: DefaultLotteryTypes = yield select(
       selectLotteryDatas
     );
     const parsedAmount: BigNumber = yield ethers.utils.parseEther(
       `${defaultLotteryData.daily?.currentBettingValue}`
     );
-    console.log(parsedAmount);
 
     const transactionResponse: ContractTransaction = yield dailyContract?.bet({
       from: connectedAccount,
@@ -57,8 +36,6 @@ function* sendingFundsSaga() {
       gasLimit: 300000,
     });
     yield transactionResponse.wait();
-    console.log(transactionResponse);
-
     if (transactionResponse) {
       yield put(actions.finishedSendingFunds());
       yield put(
@@ -69,14 +46,30 @@ function* sendingFundsSaga() {
       );
     }
   } catch (error: any) {
+    if (!connectedAccount) {
+      yield put(
+        defaultActions.setMessages({
+          content: "Make sure your wallet is connected",
+          type: "error",
+        })
+      );
+    }
+    if (error?.code === "ACTION_REJECTED") {
+      yield put(
+        defaultActions.setMessages({
+          content: "You have rejected the transaction!",
+          type: "error",
+        })
+      );
+    } else {
+      yield put(
+        defaultActions.setMessages({
+          content: error.message,
+          type: "error",
+        })
+      );
+    }
     yield put(actions.finishedSendingFunds());
-    yield put(
-      defaultActions.setMessages({
-        content: error.message as string,
-        type: "error",
-      })
-    );
-    console.log(error);
   }
 }
 

@@ -10,14 +10,12 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { TableDataTypes } from "../utils/types";
 import styled from "@emotion/styled";
-import { dateFormater } from "../utils/helpers";
 import { selectConnectedAccount } from "../store/defaultSlice/slice/selector";
 import { useSelector } from "react-redux";
 
 interface Props {
-  data: TableDataTypes[] | undefined;
+  data: [string] | undefined;
 }
 
 const StyledTableContainer = styled(TableContainer)({
@@ -35,8 +33,9 @@ const StyledTableContainer = styled(TableContainer)({
   },
 });
 
-export const ChakraTable = ({ data }: Props) => {
+export const WinnersTable = ({ data }: Props) => {
   const connectedAccount = useSelector(selectConnectedAccount);
+
   return (
     <StyledTableContainer
       border="1px"
@@ -56,9 +55,8 @@ export const ChakraTable = ({ data }: Props) => {
 
         <Tbody rounded={"md"} shadow="sm">
           {data?.map((item) => (
-            <Tr key={item?.address}>
-              <Td>{item.address}</Td>
-              <Td>{item?.timestamp ? dateFormater(item?.timestamp) : ""}</Td>
+            <Tr key={item}>
+              <Td>{item}</Td>
             </Tr>
           ))}
         </Tbody>

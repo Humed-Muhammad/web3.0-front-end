@@ -2,29 +2,26 @@ import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../..";
 import { MessageTypes } from "../../commonTypes";
 
-import { DailyContractTypes, DefaultLotteryTypes } from "./types";
+import { DefaultLotteryTypes, DefaultSliceTypes } from "./types";
 
 const selectDefaultLottery = (state: RootState) => state.defaultReducer;
 
-export const selectLotteryDatas: (
-  state: RootState
-) => DefaultLotteryTypes | undefined = createSelector(
+export const selectAllDefaultLottery: (state: RootState) => DefaultSliceTypes =
+  createSelector([selectDefaultLottery], (state) => state);
+export const selectLotteryDatas: (state: RootState) => DefaultLotteryTypes =
+  createSelector([selectDefaultLottery], (state) => state.defaultLotteryDatas);
+
+export const selectContracts = createSelector(
   [selectDefaultLottery],
-  (state) => state.defaultLotteryDatas
+  (state) => {
+    return {
+      dailyContract: state.dailyContract,
+      monthlyContract: state.monthlyContract,
+      weeklyContract: state.weeklyContract,
+    };
+  }
 );
 
-export const selectDailyContarct: (
-  state: RootState
-) => DailyContractTypes | undefined = createSelector(
-  [selectDefaultLottery],
-  (state) => state.dailyContract
-);
-export const selectDefaultLotteryDatas: (
-  state: RootState
-) => DefaultLotteryTypes | undefined = createSelector(
-  [selectLotteryDatas],
-  (state) => state
-);
 export const selectConnectedAccount: (state: RootState) => string =
   createSelector([selectDefaultLottery], (state) => state.connectedAccount);
 

@@ -1,13 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Alert,
-  AlertIcon,
-  AlertStatus,
   Box,
   Button,
   Flex,
   Heading,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { TableDataTypes } from "../utils/types";
 import { ChakraTable } from "./Table";
@@ -21,28 +19,52 @@ import { actions as defaultActions } from "../store/defaultSlice/slice";
 import {
   selectConnectedAccount,
   selectConnectingWallet,
-  selectMessage,
 } from "../store/defaultSlice/slice/selector";
 import { selectDailySendingFunds } from "../store/Daily/slice/selector";
+import { ChakraModal } from "./Modal";
+import { WinnersTable } from "./WinnersTable";
+import Countdown, { CountdownRenderProps } from "react-countdown";
 
+import { addMinutes } from "date-fns/esm";
 interface Props {
   data: TableDataTypes[] | undefined;
   title: string;
-  openModal?: () => void;
-  bettingValue: number | undefined;
-  previouseWinners: [] | undefined;
+  bettingValue: string | undefined;
   lotteryPrize: string | undefined;
+  type: "daily" | "weekly" | "monthly" | undefined;
+  winners: [string] | undefined;
+  timeLimit: number;
+  updatedAt: Date;
+  isLoading: boolean;
+  uuid4: string;
 }
+
 export const Lottery = ({
   data,
-  openModal,
   title,
   bettingValue,
   lotteryPrize,
-  previouseWinners,
+  type,
+  winners,
+  timeLimit,
+  updatedAt,
+  isLoading,
+  uuid4,
 }: Props) => {
+  // console.log(updatedAt, isLoading);
+  const gameLimit = timeLimit;
+  const startTime = updatedAt && new Date(updatedAt);
+
+  const [endTime, setEndTime] = React.useState<Date | number>(
+    addMinutes(startTime, gameLimit)
+  );
+  React.useEffect(() => {
+    if (startTime && gameLimit) {
+      setEndTime(addMinutes(startTime, gameLimit));
+    }
+  }, [timeLimit, updatedAt]);
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const dispatch = useDispatch();
-  const message = useSelector(selectMessage);
   const connectedAccount = useSelector(selectConnectedAccount);
   const isSendingFunds = useSelector(selectDailySendingFunds);
   const connectingWallet = useSelector(selectConnectingWallet);
@@ -55,14 +77,58 @@ export const Lottery = ({
       preserveAspectRation: "xMidYMid slice",
     },
   };
+  useEffect(() => {
+    dispatch(defaultActions.checkIfWalletIsConnected());
+
+    // console.log(ethereum);
+    // ethereum.on("connect", (connectInfo: ConnectionInfo) => {
+    //   console.log(connectInfo);
+    //   dispatch(defaultActions.checkIfWalletIsConnected());
+    // });
+    // ethereum.on("disconnect", (error) => {
+    //   console.log(error);
+    //   dispatch(defaultActions.checkIfWalletIsConnected());
+    // });
+  }, []);
+
+  // useEffect(() => {
+  //   if (updatedAt) {
+  //     setCurrentTime(parseInt(format(new Date(updatedAt), "T")));
+  //   }
+  // }, [updatedAt]);
+  const renderer = ({
+    days,
+    hours,
+    minutes,
+    seconds,
+    completed,
+  }: CountdownRenderProps) => {
+    if (completed) {
+      // Render a completed state
+      return <div>Time Endined</div>;
+    } else {
+      // Render a countdown
+      return (
+        <>
+          {isLoading ? (
+            <div>Fetching</div>
+          ) : (
+            <>
+              <TimeList showSeparate text="Days" time={days} />
+              <p>:</p>
+              <TimeList showSeparate text="Hours" time={hours} />
+              <p>:</p>
+              <TimeList showSeparate text="Minutes" time={minutes} />
+              <p>:</p>
+              <TimeList text="Seconds" time={seconds} />
+            </>
+          )}
+        </>
+      );
+    }
+  };
   return (
     <Box w="full">
-      {message.content ? (
-        <Alert status={message.type as AlertStatus}>
-          <AlertIcon />
-          There was an error processing your request
-        </Alert>
-      ) : null}
       <Flex
         direction={["column", "column", "column", "column", "row"]}
         justify="center"
@@ -77,19 +143,24 @@ export const Lottery = ({
             <Heading fontSize="xl" fontWeight="normal">
               {title}
             </Heading>
-            <Flex
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              onClick={openModal}
+
+            <Button
+              aria-label="History"
+              rightIcon={<BiHistory size={25} color="#319795" />}
+              variant="ghost"
+              fontWeight="normal"
+              _hover={{
+                shadow: "sm",
+              }}
+              onClick={() => {
+                dispatch(defaultActions.getWinners(type));
+                onOpen();
+              }}
             >
-              <Text fontSize="md" fontWeight="medium" color="gray.600">
-                History
-              </Text>
-              <BiHistory size={25} color="#319795" />
-            </Flex>
+              History
+            </Button>
           </Flex>
-          <ChakraTable data={data ? Array.from(data).reverse() : []} />
+          <ChakraTable data={data ? Array.from(data).reverse() : undefined} />
         </Box>
         <Box
           display="flex"
@@ -106,8 +177,8 @@ export const Lottery = ({
               <Text fontWeight="bold">{bettingValue} ETH</Text>
             </Flex>
             <Flex experimental_spaceX="12">
-              <Text>Total winners count</Text>
-              <Text fontWeight="bold">{previouseWinners?.length}</Text>
+              <Text>Total players count</Text>
+              <Text fontWeight="bold">{data?.length}</Text>
             </Flex>
           </Box>
           {connectedAccount ? (
@@ -154,13 +225,16 @@ export const Lottery = ({
           <Lottie options={lottieDefaultOptions} width="50%" />
 
           <Flex experimental_spaceX="5" mt="5">
-            <TimeList showSeparate text="Days" time="00" />
-            <TimeList showSeparate text="Hours" time="23" />
-            <TimeList showSeparate text="Minutes" time="45" />
-            <TimeList text="Seconds" time="56" />
+            <Countdown key={uuid4} date={endTime} renderer={renderer} />
           </Flex>
         </Flex>
       </Flex>
+      <ChakraModal
+        title={"Previouse Winners"}
+        isOpen={isOpen}
+        onClose={onClose}
+        Body={<WinnersTable data={winners} />}
+      />
     </Box>
   );
 };
@@ -168,22 +242,21 @@ export const Lottery = ({
 const TimeList = ({
   time,
   text,
-  showSeparate,
 }: {
-  time: string;
+  time: number;
   text: string;
   showSeparate?: boolean;
 }) => {
   return (
-    <Box>
+    <Flex direction="column" justify="center" align="center">
       <Heading
         fontSize={["xl", "xl", "2xl", "2xl", "2xl"]}
         fontWeight="normal"
         color="gray.600"
       >
-        {time} {showSeparate && " :"}
+        {time}
       </Heading>
       <Text color="gray.600">{text}</Text>
-    </Box>
+    </Flex>
   );
 };

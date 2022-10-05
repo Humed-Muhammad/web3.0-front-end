@@ -13,17 +13,21 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@reduxjs/toolkit": "^1.8.5",
+    "@types/uuid": "^8.3.4",
+    "axios": "0.26.0",
     "date-fns": "^2.29.3",
     "eth-revert-reason": "^1.0.3",
     "ethers": "^5.7.1",
     "framer-motion": "^6",
     "react": "^18.2.0",
+    "react-countdown": "^2.3.2",
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
     "react-lottie": "^1.2.3",
     "react-redux": "^8.0.4",
     "react-router-dom": "^6.4.1",
-    "redux-saga": "^1.2.1"
+    "redux-saga": "^1.2.1",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.17",

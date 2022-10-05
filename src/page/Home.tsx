@@ -1,47 +1,44 @@
 import React, { useEffect } from "react";
-import { Flex, Heading } from "@chakra-ui/react";
+import { Alert, AlertIcon, AlertStatus, Flex, Heading } from "@chakra-ui/react";
 
 import { Lottery } from "../components/Lottery";
 import { useDispatch, useSelector } from "react-redux";
-
+import { v4 as uuid4 } from "uuid";
 import { actions as defaultActions } from "../store/defaultSlice/slice";
-import { selectDefaultLotteryDatas } from "../store/defaultSlice/slice/selector";
-import { Contract, ethers, Signer } from "ethers";
-import { contarctABI, contractAddress } from "../utils";
-interface EtherWindow extends Window {
-  ethereum?: any;
-}
+import {
+  selectAllDefaultLottery,
+  selectContracts,
+  selectLotteryDatas,
+  selectMessage,
+} from "../store/defaultSlice/slice/selector";
+
 export const Home = () => {
   const dispatch = useDispatch();
-  const defaultLotteryDatas = useSelector(selectDefaultLotteryDatas);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      dispatch(defaultActions.checkIfWalletIsConnected());
-    }, 1000);
+  const defaultLotteryDatas = useSelector(selectLotteryDatas);
+  const { dailyContract } = useSelector(selectContracts);
+  const { fetchingDatas } = useSelector(selectAllDefaultLottery);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-
+  const message = useSelector(selectMessage);
   useEffect(() => {
-    dispatch(defaultActions.requestContarct());
     dispatch(defaultActions.getDefaultData());
-
-    const { ethereum }: EtherWindow = window;
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer: Signer = provider.getSigner();
-    const dailyContract = new ethers.Contract(
-      contractAddress,
-      contarctABI,
-      signer
-    );
-    dailyContract.filters;
-    dailyContract.on("LogPLayers", (player) => {
-      console.log(player);
-      dispatch(defaultActions.getDefaultData());
-    });
   }, []);
+  useEffect(() => {
+    dailyContract?.on("LogPlayers", () => {
+      dispatch(defaultActions.updateDailyLottery());
+    });
+    dailyContract?.on("LogWinner", (player: string) => {
+      console.log("Winner is picked ", player);
+
+      dispatch(defaultActions.updateTime("daily"));
+      dispatch(defaultActions.updateDailyLottery());
+      dispatch(
+        defaultActions.setMessages({
+          content: `Daily winner is picked ${player}`,
+          type: "success",
+        })
+      );
+    });
+  }, [dailyContract]);
 
   return (
     <Flex
@@ -56,12 +53,23 @@ export const Home = () => {
       <Heading color="gray.600" mb="10">
         Lottery
       </Heading>
+      {message.content ? (
+        <Alert h="20" status={message.type as AlertStatus}>
+          <AlertIcon />
+          {message.content}
+        </Alert>
+      ) : null}
       <Lottery
         bettingValue={defaultLotteryDatas?.daily?.currentBettingValue}
         lotteryPrize={defaultLotteryDatas?.daily?.lotteryPrize}
-        previouseWinners={[]}
+        type={defaultLotteryDatas?.daily?.type}
         data={defaultLotteryDatas?.daily?.players}
         title="Daily slot"
+        winners={defaultLotteryDatas.daily?.winners}
+        timeLimit={60}
+        updatedAt={defaultLotteryDatas.daily?.updatedAt as Date}
+        isLoading={fetchingDatas}
+        uuid4={uuid4()}
       />
     </Flex>
   );
