@@ -77,25 +77,7 @@ export const Lottery = ({
       preserveAspectRation: "xMidYMid slice",
     },
   };
-  useEffect(() => {
-    dispatch(defaultActions.checkIfWalletIsConnected());
 
-    // console.log(ethereum);
-    // ethereum.on("connect", (connectInfo: ConnectionInfo) => {
-    //   console.log(connectInfo);
-    //   dispatch(defaultActions.checkIfWalletIsConnected());
-    // });
-    // ethereum.on("disconnect", (error) => {
-    //   console.log(error);
-    //   dispatch(defaultActions.checkIfWalletIsConnected());
-    // });
-  }, []);
-
-  // useEffect(() => {
-  //   if (updatedAt) {
-  //     setCurrentTime(parseInt(format(new Date(updatedAt), "T")));
-  //   }
-  // }, [updatedAt]);
   const renderer = ({
     days,
     hours,

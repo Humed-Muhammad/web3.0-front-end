@@ -16,7 +16,14 @@ import { PayloadAction } from "@reduxjs/toolkit";
 
 function* checkIfWalletIsConnectedSaga() {
   try {
-    if (!ethereum) return alert("Please install metamask!");
+    if (!ethereum) {
+      yield put(
+        actions.setMessages({
+          content: "Please install metamask!",
+          type: "warning",
+        })
+      );
+    }
     const accounts: string[] = yield ethereum.request({
       method: "eth_accounts",
     });
@@ -31,7 +38,7 @@ function* checkIfWalletIsConnectedSaga() {
       );
     } else {
       yield put(actions.setConnectedWallet(accounts[0]));
-      // yield put(actions.getDefaultData());
+      yield put(actions.getDefaultData());
       yield put(
         actions.setMessages({
           content: "",
@@ -52,7 +59,14 @@ function* checkIfWalletIsConnectedSaga() {
 
 function* requestWalletConnectionsSaga() {
   try {
-    if (!ethereum) return alert("Please install metamask!");
+    if (!ethereum) {
+      yield put(
+        actions.setMessages({
+          content: "Please install metamask!",
+          type: "warning",
+        })
+      );
+    }
     yield ethereum.request({
       method: "eth_requestAccounts",
     });
@@ -141,7 +155,7 @@ function* updateDailyLotterySaga() {
     const { dailyContract }: ContractListTypes = yield select(selectContracts);
     const dailyPlayers: [] = yield dailyContract?.getPlayers();
     const dailyBalance: BigNumber = yield dailyContract?.getBalance();
-    const currentBettingValue: BigNumber = yield dailyContract?.bettingValue();
+    const dailyBettingValue: BigNumber = yield dailyContract?.bettingValue();
 
     const formatedDailyPlayers = formatPlayers(dailyPlayers);
     yield put(
@@ -149,7 +163,7 @@ function* updateDailyLotterySaga() {
         data: {
           lotteryPrize: formatEther(dailyBalance),
           players: formatedDailyPlayers,
-          currentBettingValue: formatEther(currentBettingValue),
+          currentBettingValue: formatEther(dailyBettingValue),
         },
         type: "daily",
       })

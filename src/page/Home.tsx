@@ -11,6 +11,7 @@ import {
   selectLotteryDatas,
   selectMessage,
 } from "../store/defaultSlice/slice/selector";
+import { ethereum } from "../utils/constants";
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -19,15 +20,20 @@ export const Home = () => {
   const { fetchingDatas } = useSelector(selectAllDefaultLottery);
 
   const message = useSelector(selectMessage);
+
   useEffect(() => {
-    dispatch(defaultActions.getDefaultData());
-  }, []);
+    dispatch(defaultActions.checkIfWalletIsConnected());
+
+    ethereum.on("accountsChanged", () => {
+      dispatch(defaultActions.checkIfWalletIsConnected());
+    });
+  }, [ethereum]);
   useEffect(() => {
     dailyContract?.on("LogPlayers", () => {
       dispatch(defaultActions.updateDailyLottery());
     });
     dailyContract?.on("LogWinner", (player: string) => {
-      console.log("Winner is picked ", player);
+      console.log(`Winner is picked ${player}`);
 
       dispatch(defaultActions.updateTime("daily"));
       dispatch(defaultActions.updateDailyLottery());
@@ -62,7 +68,8 @@ export const Home = () => {
       <Lottery
         bettingValue={defaultLotteryDatas?.daily?.currentBettingValue}
         lotteryPrize={defaultLotteryDatas?.daily?.lotteryPrize}
-        type={defaultLotteryDatas?.daily?.type}
+        type="daily"
+        // type={defaultLotteryDatas?.daily?.type}
         data={defaultLotteryDatas?.daily?.players}
         title="Daily slot"
         winners={defaultLotteryDatas.daily?.winners}
