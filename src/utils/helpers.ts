@@ -1,5 +1,7 @@
 import { format } from "date-fns";
-import { BigNumber, ethers } from "ethers";
+import { BigNumber, Contract, ethers, Signer } from "ethers";
+import { FetchedApiRespose } from "../store/commonTypes";
+import { LOTTERY_TYPE } from "./constants";
 import { TableDataTypes } from "./types";
 
 export const dateFormater = (date: Date, formatType = "PPpp") => {
@@ -38,4 +40,36 @@ export const formatPlayers = (players: []) => {
 export const formatEther = (value: BigNumber) => {
   const result = ethers.utils.formatEther(value._hex);
   return result;
+};
+
+export interface GetLotteryResponseType {
+  type: keyof typeof LOTTERY_TYPE;
+  signer: Signer;
+  lotteryData: FetchedApiRespose;
+}
+/**
+ * @param  {GetLotteryResponseType} data
+ * @returns formatedPlayers
+ */
+export const getLotteryData = (data: GetLotteryResponseType) => {
+  const lotteryFromDB = data.lotteryData.lottery.find(
+    (lott) => lott.type === data.type
+  );
+  const contract: Contract = new ethers.Contract(
+    lotteryFromDB?.contractAddress as string,
+    data.lotteryData.abi,
+    data.signer
+  );
+  const players: [] = contract?.getPlayers();
+  const bettingValue = formatEther(contract?.bettingValue());
+  const lotteryPrize = formatEther(contract?.getBalance());
+  const formatedPlayers = formatPlayers(players);
+
+  return {
+    contract,
+    bettingValue,
+    lotteryPrize,
+    players: formatedPlayers,
+    lotteryFromDB,
+  };
 };

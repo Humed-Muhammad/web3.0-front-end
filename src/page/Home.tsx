@@ -1,83 +1,119 @@
-import React, { useEffect } from "react";
-import { Alert, AlertIcon, AlertStatus, Flex, Heading } from "@chakra-ui/react";
-
-import { Lottery } from "../components/Lottery";
-import { useDispatch, useSelector } from "react-redux";
-import { v4 as uuid4 } from "uuid";
-import { actions as defaultActions } from "../store/defaultSlice/slice";
+import React from "react";
 import {
-  selectAllDefaultLottery,
-  selectContracts,
-  selectLotteryDatas,
-  selectMessage,
-} from "../store/defaultSlice/slice/selector";
-import { ethereum } from "../utils/constants";
+  Button,
+  Box,
+  Heading,
+  Highlight,
+  Text,
+  Flex,
+  Divider,
+} from "@chakra-ui/react";
+import { bg } from "../assets/images";
+import { SectionContainer } from "../components/core/SectionContainer";
+import { fonts } from "../utils/theme";
 
 export const Home = () => {
-  const dispatch = useDispatch();
-  const defaultLotteryDatas = useSelector(selectLotteryDatas);
-  const { dailyContract } = useSelector(selectContracts);
-  const { fetchingDatas } = useSelector(selectAllDefaultLottery);
-
-  const message = useSelector(selectMessage);
-
-  useEffect(() => {
-    dispatch(defaultActions.checkIfWalletIsConnected());
-
-    ethereum.on("accountsChanged", () => {
-      dispatch(defaultActions.checkIfWalletIsConnected());
-    });
-  }, [ethereum]);
-  useEffect(() => {
-    dailyContract?.on("LogPlayers", () => {
-      dispatch(defaultActions.updateDailyLottery());
-    });
-    dailyContract?.on("LogWinner", (player: string) => {
-      console.log(`Winner is picked ${player}`);
-
-      dispatch(defaultActions.updateTime("daily"));
-      dispatch(defaultActions.updateDailyLottery());
-      dispatch(
-        defaultActions.setMessages({
-          content: `Daily winner is picked ${player}`,
-          type: "success",
-        })
-      );
-    });
-  }, [dailyContract]);
-
   return (
-    <Flex
-      py="10"
-      px="5"
-      alignItems="center"
-      width="full"
-      flexGrow={1}
-      direction="column"
-      h="auto"
-    >
-      <Heading color="gray.600" mb="10">
-        Lottery
-      </Heading>
-      {message.content ? (
-        <Alert h="20" status={message.type as AlertStatus}>
-          <AlertIcon />
-          {message.content}
-        </Alert>
-      ) : null}
-      <Lottery
-        bettingValue={defaultLotteryDatas?.daily?.currentBettingValue}
-        lotteryPrize={defaultLotteryDatas?.daily?.lotteryPrize}
-        type="daily"
-        // type={defaultLotteryDatas?.daily?.type}
-        data={defaultLotteryDatas?.daily?.players}
-        title="Daily slot"
-        winners={defaultLotteryDatas.daily?.winners}
-        timeLimit={60}
-        updatedAt={defaultLotteryDatas.daily?.updatedAt as Date}
-        isLoading={fetchingDatas}
-        uuid4={uuid4()}
-      />
-    </Flex>
+    <Box h="auto" w="full" bg="white">
+      <SectionContainer
+        justify="center"
+        direction="column"
+        align="center"
+        bgImage={bg}
+        h="94vh"
+        position="relative"
+      >
+        <Text
+          fontWeight="bold"
+          color="white"
+          fontFamily={fonts.MontserratAlt}
+          fontSize="4xl"
+          position="absolute"
+          top="10"
+        >
+          TOMBOLA{" "}
+          <Highlight
+            query={["O"]}
+            styles={{
+              bgGradient: "linear-gradient(to-b, #B97AED, #0157A3)",
+              bgClip: "text",
+              fontSize: "42px",
+              // fontWeight: "bol",
+            }}
+          >
+            WOT
+          </Highlight>
+        </Text>
+
+        <Flex w="60%" align="center">
+          <Box mt="5" w={["96"]}>
+            <Heading
+              fontFamily={fonts.Montserrat}
+              color="white"
+              as="h1"
+              fontSize="96px"
+              fontWeight="normal"
+              lineHeight="90px"
+            >
+              <Highlight
+                query="Smart"
+                styles={{
+                  fontSize: "96px",
+                  color: "white",
+                  display: "block",
+                  fontWeight: "bold",
+                }}
+              >
+                Smart Lottery
+              </Highlight>
+            </Heading>
+            <Text
+              mt="3"
+              color="white"
+              fontFamily={fonts.Montserrat}
+              fontWeight="medium"
+              lineHeight="7"
+              textAlign="justify"
+            >
+              <Highlight
+                query={["blockchain", "cryptocurrecy", "equal chance"]}
+                styles={{
+                  fontWeight: "bold",
+                  color: "inherit",
+                  fontFamily: "inherit",
+                }}
+              >
+                Based on blockchain technology that uses cryptocurrecy,
+                specially designed to create fun and equal chance to win a prize
+              </Highlight>
+            </Text>
+            <Flex mb="10" mt="6" experimental_spaceX="5">
+              <Button fontWeight="bold" color="secondary" variant="link">
+                Hourly
+              </Button>
+              <Divider
+                border="1px"
+                color="white"
+                orientation="vertical"
+                h="35px"
+              />
+              <Button fontWeight="bold" color="secondary" variant="link">
+                Daily
+              </Button>
+              <Divider
+                color="white"
+                orientation="vertical"
+                h="35px"
+                border="1px"
+              />
+              <Button fontWeight="bold" color="secondary" variant="link">
+                Monthly
+              </Button>
+            </Flex>
+            <Button variant="large">Connect your wallet</Button>
+          </Box>
+        </Flex>
+      </SectionContainer>
+    </Box>
   );
 };

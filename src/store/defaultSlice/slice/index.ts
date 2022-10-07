@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { LOTTERY_TYPE } from "../../../utils/constants";
 import { TableDataTypes } from "../../../utils/types";
 import { MessageTypes } from "../../commonTypes";
 import {
@@ -19,7 +20,7 @@ const initialState: DefaultSliceTypes = {
   dailyContract: undefined,
   weeklyContract: undefined,
   monthlyContract: undefined,
-  contractAddress: "",
+  // contractAddress: "",
   abi: undefined,
   connectedAccount: "",
   connectingWallet: false,
@@ -81,16 +82,15 @@ export const defaultSlice = createSlice({
         action.payload.player
       );
     },
-    updateDailyLottery: (state) => {
+    updateSingleLottery: (
+      state,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _action: PayloadAction<keyof typeof LOTTERY_TYPE>
+    ) => {
       state.updatingDailyLottery = true;
     },
-    updateWeeklyLottery: (state) => {
-      state.updatingWeeklyLottery = true;
-    },
-    updateMonthlyLottery: (state) => {
-      state.updatingMonthlyLottery = true;
-    },
-    updateSingleLottery: (
+
+    setUpdateSingleLottery: (
       state,
       action: PayloadAction<{
         data: CommonDefaultDataTypes;

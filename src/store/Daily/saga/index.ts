@@ -9,7 +9,7 @@ import {
 } from "../../defaultSlice/slice/types";
 import {
   selectConnectedAccount,
-  selectContracts,
+  selectContract,
   selectLotteryDatas,
 } from "../../defaultSlice/slice/selector";
 
@@ -22,7 +22,7 @@ function* sendingFundsSaga() {
   try {
     const { ethereum }: EtherWindow = yield window;
     if (!ethereum) return alert("Please install metamask!");
-    const { dailyContract }: ContractListTypes = yield select(selectContracts);
+    const { dailyContract }: ContractListTypes = yield select(selectContract);
     const defaultLotteryData: DefaultLotteryTypes = yield select(
       selectLotteryDatas
     );

@@ -1,4 +1,5 @@
 import { Contract } from "ethers";
+import { LOTTERY_TYPE } from "../../../utils/constants";
 import { TableDataTypes } from "../../../utils/types";
 import { MessageTypes } from "../../commonTypes";
 
@@ -10,7 +11,7 @@ export interface CommonDefaultDataTypes {
   players?: TableDataTypes[];
   lotteryPrize?: string;
   updatedAt?: Date;
-  type?: "daily" | "weekly" | "monthly";
+  type?: keyof typeof LOTTERY_TYPE;
   winners?: [string];
 }
 
@@ -27,7 +28,7 @@ export interface ContractListTypes {
 }
 export interface DefaultSliceTypes {
   defaultLotteryDatas: DefaultLotteryTypes;
-  contractAddress: string;
+  // contractAddress: string;
   abi: JSON | undefined;
   connectedAccount: string;
   fetchingDatas: boolean;

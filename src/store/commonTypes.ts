@@ -1,4 +1,5 @@
 import { AlertStatus } from "@chakra-ui/react";
+import { LOTTERY_TYPE } from "../utils/constants";
 
 export interface MessageTypes {
   type: AlertStatus | null;
@@ -8,7 +9,7 @@ export interface FetchedLottery {
   winners: [string];
   updatedAt: Date;
   _id: string;
-  type: "daily" | "weekly" | "monthly";
+  type: keyof typeof LOTTERY_TYPE;
   contractAddress: string;
   currency: "ether";
 }

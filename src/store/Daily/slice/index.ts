@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { RootLotteryTypes } from "./types";
+import { DailyLotteryTypes } from "./types";
 
-const initialState: RootLotteryTypes = {
+const initialState: DailyLotteryTypes = {
   sendingFunds: false,
 };
 

@@ -1,19 +1,22 @@
 import { put, select, takeLatest } from "redux-saga/effects";
 import { actions } from "../slice";
-import { BigNumber, Contract, ContractInterface, ethers, Signer } from "ethers";
+import { BigNumber, ethers, Signer } from "ethers";
 
-import {
-  contarctABI,
-  contractAddress,
-  ethereum,
-} from "../../../utils/constants";
-import { selectContracts } from "../slice/selector";
+import { ethereum, LOTTERY_TYPE } from "../../../utils/constants";
+import { selectContract } from "../slice/selector";
 import { ContractListTypes } from "../slice/types";
-import { formatEther, formatPlayers } from "../../../utils/helpers";
+import {
+  formatEther,
+  formatPlayers,
+  getLotteryData,
+} from "../../../utils/helpers";
 import makeCall from "../../../API/makeCalls";
 import { FetchedApiRespose } from "../../commonTypes";
 import { PayloadAction } from "@reduxjs/toolkit";
+import { GetLotteryTypeRes } from "../../../utils/types";
+import { RootState } from "../..";
 
+/* This function is responsible for checking if the user has connected their wallet. */
 function* checkIfWalletIsConnectedSaga() {
   try {
     if (!ethereum) {
@@ -57,6 +60,7 @@ function* checkIfWalletIsConnectedSaga() {
   }
 }
 
+/* This function is responsible for requesting the user to connect their wallet. */
 function* requestWalletConnectionsSaga() {
   try {
     if (!ethereum) {
@@ -77,71 +81,79 @@ function* requestWalletConnectionsSaga() {
     alert(error);
   }
 }
-function* requestContarctSaga() {
-  try {
-    const provider: { getSigner: () => object } =
-      yield new ethers.providers.Web3Provider(ethereum);
-    const signer: Signer = yield provider.getSigner();
-    const dailyContract: Contract = yield new ethers.Contract(
-      contractAddress,
-      contarctABI,
-      signer
-    );
 
-    yield put(
-      actions.setContract({
-        dailyContract: dailyContract,
-        weeklyContract: undefined,
-        monthlyContract: undefined,
-      })
-    );
-  } catch (error) {
-    console.log(error);
-  }
-}
-
+/* This function is responsible for getting the default data for the lottery. */
 function* requestDefaultLottryDatasSaga() {
   try {
-    // const { dailyContract }: ContractListTypes = yield select(selectContracts);
-    const res: FetchedApiRespose = yield makeCall({
+    const response: FetchedApiRespose = yield makeCall({
       method: "GET",
       route: "",
       isSecureRoute: true,
     });
-    const dailyLottery = res.lottery.find((lott) => lott.type === "daily");
+
+    /* Creating a provider for the ethers.js library. */
     const provider: { getSigner: () => object } =
       yield new ethers.providers.Web3Provider(ethereum);
-    const signer: Signer = yield provider.getSigner();
-    const dailyContract: Contract = yield new ethers.Contract(
-      dailyLottery?.contractAddress as string,
-      res.abi,
-      signer
-      // contractAddress,
-      // contarctABI,
-      // signer
-    );
-    const dailyPlayers: [] = yield dailyContract?.getPlayers();
-    const dailyBettingValue: BigNumber = yield dailyContract?.bettingValue();
-    const dailyBalance: BigNumber = yield dailyContract?.getBalance();
 
+    /* Getting the signer from the provider. */
+    const signer: Signer = yield provider.getSigner();
+
+    /***@Daily */
+    const daily: GetLotteryTypeRes = yield getLotteryData({
+      lotteryData: response,
+      signer: signer,
+      type: LOTTERY_TYPE.daily,
+    });
+    /**@END */
+
+    /***@Wekkly  This section*/
+    const weekly: GetLotteryTypeRes = yield getLotteryData({
+      lotteryData: response,
+      signer: signer,
+      type: LOTTERY_TYPE.weekly,
+    });
+    /**@END */
+
+    /***@Monthly  This section*/
+    const monthly: GetLotteryTypeRes = yield getLotteryData({
+      lotteryData: response,
+      signer: signer,
+      type: LOTTERY_TYPE.monthly,
+    });
+    /**@END */
+
+    /* Setting the contracts in the redux store for each lottery type. */
     yield put(
       actions.setContract({
-        dailyContract: dailyContract,
-        weeklyContract: undefined,
-        monthlyContract: undefined,
+        dailyContract: daily.contract,
+        weeklyContract: weekly.contract,
+        monthlyContract: monthly.contract,
       })
     );
 
-    const formatedDailyPlayers = formatPlayers(dailyPlayers);
-
+    /* Setting the default data for the lottery. */
     yield put(
       actions.setDefaultDatas({
         daily: {
-          currentBettingValue: formatEther(dailyBettingValue),
-          lotteryPrize: formatEther(dailyBalance),
-          players: formatedDailyPlayers,
-          updatedAt: dailyLottery?.updatedAt,
-          type: dailyLottery?.type,
+          currentBettingValue: daily.bettingValue,
+          lotteryPrize: daily.lotteryPrize,
+          players: daily.players,
+          updatedAt: daily.lotteryFromDB?.updatedAt,
+          type: LOTTERY_TYPE.daily,
+        },
+        weekly: {
+          currentBettingValue: weekly.bettingValue,
+          lotteryPrize: weekly.lotteryPrize,
+          players: weekly.players,
+          updatedAt: weekly.lotteryFromDB?.updatedAt,
+          type: LOTTERY_TYPE.daily,
+        },
+        monthly: {
+          currentBettingValue: monthly.bettingValue,
+          lotteryPrize: monthly.lotteryPrize,
+          players: monthly.players,
+          updatedAt: monthly.lotteryFromDB?.updatedAt,
+          type: LOTTERY_TYPE.daily,
         },
       })
     );
@@ -150,22 +162,27 @@ function* requestDefaultLottryDatasSaga() {
   }
 }
 
-function* updateDailyLotterySaga() {
+/* This function is responsible for updating single lottery data by it type. */
+function* updateSingleLotterySaga(
+  action: PayloadAction<keyof typeof LOTTERY_TYPE>
+) {
   try {
-    const { dailyContract }: ContractListTypes = yield select(selectContracts);
+    const { dailyContract }: ContractListTypes = yield select(
+      (state: RootState) => selectContract(state, action.payload)
+    );
     const dailyPlayers: [] = yield dailyContract?.getPlayers();
     const dailyBalance: BigNumber = yield dailyContract?.getBalance();
     const dailyBettingValue: BigNumber = yield dailyContract?.bettingValue();
 
     const formatedDailyPlayers = formatPlayers(dailyPlayers);
     yield put(
-      actions.updateSingleLottery({
+      actions.setUpdateSingleLottery({
         data: {
           lotteryPrize: formatEther(dailyBalance),
           players: formatedDailyPlayers,
           currentBettingValue: formatEther(dailyBettingValue),
         },
-        type: "daily",
+        type: action.payload,
       })
     );
   } catch (error) {
@@ -173,9 +190,7 @@ function* updateDailyLotterySaga() {
   }
 }
 
-function* getWinnersSaga(
-  action: PayloadAction<"daily" | "weekly" | "monthly">
-) {
+function* getWinnersSaga(action: PayloadAction<keyof typeof LOTTERY_TYPE>) {
   try {
     const res: [string] = yield makeCall({
       method: "GET",
@@ -189,7 +204,6 @@ function* getWinnersSaga(
 }
 
 export function* defaultLotterySaga() {
-  yield takeLatest(actions.requestContarct.type, requestContarctSaga);
   yield takeLatest(actions.getDefaultData.type, requestDefaultLottryDatasSaga);
   yield takeLatest(
     actions.requestWalletConnection.type,
@@ -199,6 +213,6 @@ export function* defaultLotterySaga() {
     actions.checkIfWalletIsConnected.type,
     checkIfWalletIsConnectedSaga
   );
-  yield takeLatest(actions.updateDailyLottery.type, updateDailyLotterySaga);
+  yield takeLatest(actions.updateSingleLottery.type, updateSingleLotterySaga);
   yield takeLatest(actions.getWinners.type, getWinnersSaga);
 }

@@ -1,3 +1,3 @@
-export interface RootLotteryTypes {
+export interface DailyLotteryTypes {
   sendingFunds: boolean;
 }

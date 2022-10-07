@@ -8,4 +8,10 @@ interface EtherWindow extends Window {
 }
 const { ethereum }: EtherWindow = window;
 
+export enum LOTTERY_TYPE {
+  daily = "daily",
+  weekly = "weekly",
+  monthly = "monthly",
+}
+
 export { ethereum };
