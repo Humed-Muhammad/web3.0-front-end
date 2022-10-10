@@ -20,12 +20,20 @@ export const theme = extendTheme({
       text: {
         default: "#14113D",
       },
+      lightGray: {
+        default: "#FBFBFB",
+
+        _dark: "#fff",
+      },
+      meduimGray: {
+        default: "#F5F5F5",
+      },
     },
   },
   components: {
     Text: {
       baseStyle: {
-        // fontWeight: "300",
+        fontWeight: "300",
         fontFamily: "Poppins",
         fontSize: "16px",
         color: "#14113D",

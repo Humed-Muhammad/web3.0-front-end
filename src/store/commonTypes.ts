@@ -12,6 +12,10 @@ export interface FetchedLottery {
   type: keyof typeof LOTTERY_TYPE;
   contractAddress: string;
   currency: "ether";
+  count: number;
+  gasCut: number;
+  priceCut: number;
+  initialDepo: number;
 }
 export interface FetchedApiRespose {
   abi: object[];

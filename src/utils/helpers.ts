@@ -38,7 +38,7 @@ export const formatPlayers = (players: []) => {
 };
 
 export const formatEther = (value: BigNumber) => {
-  const result = ethers.utils.formatEther(value._hex);
+  const result = ethers.utils.formatEther(value?._hex);
   return result;
 };
 
@@ -51,18 +51,18 @@ export interface GetLotteryResponseType {
  * @param  {GetLotteryResponseType} data
  * @returns formatedPlayers
  */
-export const getLotteryData = (data: GetLotteryResponseType) => {
+export const getLotteryData = async (data: GetLotteryResponseType) => {
   const lotteryFromDB = data.lotteryData.lottery.find(
     (lott) => lott.type === data.type
   );
-  const contract: Contract = new ethers.Contract(
+  const contract: Contract = await new ethers.Contract(
     lotteryFromDB?.contractAddress as string,
     data.lotteryData.abi,
     data.signer
   );
-  const players: [] = contract?.getPlayers();
-  const bettingValue = formatEther(contract?.bettingValue());
-  const lotteryPrize = formatEther(contract?.getBalance());
+  const players: [] = await contract?.getPlayers();
+  const bettingValue = formatEther(await contract?.bettingValue());
+  const lotteryPrize = formatEther(await contract?.getBalance());
   const formatedPlayers = formatPlayers(players);
 
   return {

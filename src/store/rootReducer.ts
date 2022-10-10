@@ -1,4 +1,5 @@
 import { dailyReducer } from "./Daily/slice";
 import { defaultReducer } from "./defaultSlice/slice";
+import { weeklyReducer } from "./Weekly/slice";
 
-export const reducers = { dailyReducer, defaultReducer };
+export const reducers = { dailyReducer, defaultReducer, weeklyReducer };

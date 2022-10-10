@@ -24,17 +24,17 @@ function* sendingFundsSaga() {
   try {
     const { ethereum }: EtherWindow = yield window;
     if (!ethereum) return alert("Please install metamask!");
-    const { dailyContract }: ContractListTypes = yield select(
-      (state: RootState) => selectContract(state, LOTTERY_TYPE.daily)
+    const { weeklyContract }: ContractListTypes = yield select(
+      (state: RootState) => selectContract(state, LOTTERY_TYPE.weekly)
     );
     const defaultLotteryData: DefaultLotteryTypes = yield select(
       selectLotteryDatas
     );
     const parsedAmount: BigNumber = yield ethers.utils.parseEther(
-      `${defaultLotteryData.daily?.currentBettingValue}`
+      `${defaultLotteryData.weekly?.currentBettingValue}`
     );
 
-    const transactionResponse: ContractTransaction = yield dailyContract?.bet({
+    const transactionResponse: ContractTransaction = yield weeklyContract?.bet({
       from: connectedAccount,
       value: parsedAmount,
       gasLimit: 300000,
@@ -77,6 +77,6 @@ function* sendingFundsSaga() {
   }
 }
 
-export function* dailyLotterySaga() {
+export function* weeklyLotterySaga() {
   yield takeLatest(actions.sendFunds.type, sendingFundsSaga);
 }

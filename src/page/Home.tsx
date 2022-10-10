@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Button,
   Box,
@@ -7,12 +7,35 @@ import {
   Text,
   Flex,
   Divider,
+  Image,
+  Center,
 } from "@chakra-ui/react";
-import { bg } from "../assets/images";
+import { bg, token } from "../assets/images";
 import { SectionContainer } from "../components/core/SectionContainer";
 import { fonts } from "../utils/theme";
 
+import { ethereum } from "../utils/constants";
+import { actions as defaultActions } from "../store/defaultSlice/slice";
+import { useDispatch, useSelector } from "react-redux";
+import { Hourly } from "../components/Hourly";
+import {
+  selectConnectedAccount,
+  selectConnectingWallet,
+} from "../store/defaultSlice/slice/selector";
+import { id } from "date-fns/locale";
 export const Home = () => {
+  const connectedAccount = useSelector(selectConnectedAccount);
+  // const isSendingFunds = useSelector(selectDailySendingFunds);
+  const connectingWallet = useSelector(selectConnectingWallet);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(defaultActions.checkIfWalletIsConnected());
+
+    ethereum.on("accountsChanged", () => {
+      dispatch(defaultActions.checkIfWalletIsConnected());
+      dispatch(defaultActions.getDefaultData());
+    });
+  }, [ethereum]);
   return (
     <Box h="auto" w="full" bg="white">
       <SectionContainer
@@ -20,14 +43,16 @@ export const Home = () => {
         direction="column"
         align="center"
         bgImage={bg}
-        h="94vh"
+        h="93vh"
         position="relative"
+        backgroundPosition="center"
+        overflowX="hidden"
       >
         <Text
           fontWeight="bold"
           color="white"
           fontFamily={fonts.MontserratAlt}
-          fontSize="4xl"
+          fontSize="32px"
           position="absolute"
           top="10"
         >
@@ -37,15 +62,14 @@ export const Home = () => {
             styles={{
               bgGradient: "linear-gradient(to-b, #B97AED, #0157A3)",
               bgClip: "text",
-              fontSize: "42px",
-              // fontWeight: "bol",
+              fontSize: "4xl",
             }}
           >
             WOT
           </Highlight>
         </Text>
 
-        <Flex w="60%" align="center">
+        <Flex w="62%" align="center">
           <Box mt="5" w={["96"]}>
             <Heading
               fontFamily={fonts.Montserrat}
@@ -71,7 +95,7 @@ export const Home = () => {
               mt="3"
               color="white"
               fontFamily={fonts.Montserrat}
-              fontWeight="medium"
+              fontWeight="normal"
               lineHeight="7"
               textAlign="justify"
             >
@@ -110,9 +134,33 @@ export const Home = () => {
                 Monthly
               </Button>
             </Flex>
-            <Button variant="large">Connect your wallet</Button>
+            <Button
+              onClick={() => {
+                if (!connectedAccount) {
+                  dispatch(defaultActions.requestWalletConnection());
+                }
+              }}
+              variant="large"
+            >
+              {connectedAccount ? "Connected" : "Connect your wallet"}
+            </Button>
           </Box>
+          <Image
+            ml="10"
+            display={["none", null, null, "initial"]}
+            src={token}
+            alt="token coin"
+          />
         </Flex>
+      </SectionContainer>
+
+      <Center h="94vh" position="relative">
+        <Box top="-6" position="absolute">
+          <Hourly />
+        </Box>
+      </Center>
+      <SectionContainer py="32" justify="center" bg="meduimGray">
+        <Hourly />
       </SectionContainer>
     </Box>
   );

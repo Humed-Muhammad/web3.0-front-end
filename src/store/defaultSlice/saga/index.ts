@@ -42,6 +42,7 @@ function* checkIfWalletIsConnectedSaga() {
     } else {
       yield put(actions.setConnectedWallet(accounts[0]));
       yield put(actions.getDefaultData());
+      console.log("---I am called");
       yield put(
         actions.setMessages({
           content: "",
@@ -90,7 +91,6 @@ function* requestDefaultLottryDatasSaga() {
       route: "",
       isSecureRoute: true,
     });
-
     /* Creating a provider for the ethers.js library. */
     const provider: { getSigner: () => object } =
       yield new ethers.providers.Web3Provider(ethereum);
@@ -104,30 +104,32 @@ function* requestDefaultLottryDatasSaga() {
       signer: signer,
       type: LOTTERY_TYPE.daily,
     });
+    console.log("===========", daily);
+    console.log("---- here");
     /**@END */
 
-    /***@Wekkly  This section*/
-    const weekly: GetLotteryTypeRes = yield getLotteryData({
-      lotteryData: response,
-      signer: signer,
-      type: LOTTERY_TYPE.weekly,
-    });
-    /**@END */
+    // /***@Wekkly  This section*/
+    // const weekly: GetLotteryTypeRes = yield getLotteryData({
+    //   lotteryData: response,
+    //   signer: signer,
+    //   type: LOTTERY_TYPE.weekly,
+    // });
+    // /**@END */
 
-    /***@Monthly  This section*/
-    const monthly: GetLotteryTypeRes = yield getLotteryData({
-      lotteryData: response,
-      signer: signer,
-      type: LOTTERY_TYPE.monthly,
-    });
-    /**@END */
+    // /***@Monthly  This section*/
+    // const monthly: GetLotteryTypeRes = yield getLotteryData({
+    //   lotteryData: response,
+    //   signer: signer,
+    //   type: LOTTERY_TYPE.monthly,
+    // });
+    // /**@END */
 
     /* Setting the contracts in the redux store for each lottery type. */
     yield put(
       actions.setContract({
         dailyContract: daily.contract,
-        weeklyContract: weekly.contract,
-        monthlyContract: monthly.contract,
+        weeklyContract: undefined,
+        monthlyContract: undefined,
       })
     );
 
@@ -140,21 +142,33 @@ function* requestDefaultLottryDatasSaga() {
           players: daily.players,
           updatedAt: daily.lotteryFromDB?.updatedAt,
           type: LOTTERY_TYPE.daily,
+          count: daily.lotteryFromDB?.count,
+          priceCut: daily.lotteryFromDB?.priceCut,
+          gasCut: daily.lotteryFromDB?.gasCut,
+          initialDepo: daily.lotteryFromDB?.initialDepo,
         },
-        weekly: {
-          currentBettingValue: weekly.bettingValue,
-          lotteryPrize: weekly.lotteryPrize,
-          players: weekly.players,
-          updatedAt: weekly.lotteryFromDB?.updatedAt,
-          type: LOTTERY_TYPE.daily,
-        },
-        monthly: {
-          currentBettingValue: monthly.bettingValue,
-          lotteryPrize: monthly.lotteryPrize,
-          players: monthly.players,
-          updatedAt: monthly.lotteryFromDB?.updatedAt,
-          type: LOTTERY_TYPE.daily,
-        },
+        // weekly: {
+        //   currentBettingValue: weekly.bettingValue,
+        //   lotteryPrize: weekly.lotteryPrize,
+        //   players: weekly.players,
+        //   updatedAt: weekly.lotteryFromDB?.updatedAt,
+        //   type: LOTTERY_TYPE.daily,
+        //   count: weekly.lotteryFromDB?.count,
+        //   priceCut: weekly.lotteryFromDB?.priceCut,
+        //   gasCut: weekly.lotteryFromDB?.gasCut,
+        //   initialDepo: weekly.lotteryFromDB?.initialDepo,
+        // },
+        // monthly: {
+        //   currentBettingValue: monthly.bettingValue,
+        //   lotteryPrize: monthly.lotteryPrize,
+        //   players: monthly.players,
+        //   updatedAt: monthly.lotteryFromDB?.updatedAt,
+        //   type: LOTTERY_TYPE.daily,
+        //   count: monthly.lotteryFromDB?.count,
+        //   priceCut: monthly.lotteryFromDB?.priceCut,
+        //   gasCut: monthly.lotteryFromDB?.gasCut,
+        //   initialDepo: monthly.lotteryFromDB?.initialDepo,
+        // },
       })
     );
   } catch (error) {

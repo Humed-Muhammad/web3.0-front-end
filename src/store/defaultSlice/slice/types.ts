@@ -13,6 +13,10 @@ export interface CommonDefaultDataTypes {
   updatedAt?: Date;
   type?: keyof typeof LOTTERY_TYPE;
   winners?: [string];
+  count?: number;
+  priceCut?: number;
+  gasCut?: number;
+  initialDepo?: number;
 }
 
 export interface DefaultLotteryTypes {
