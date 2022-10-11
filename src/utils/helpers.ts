@@ -55,7 +55,7 @@ export const getLotteryData = async (data: GetLotteryResponseType) => {
   const lotteryFromDB = data.lotteryData.lottery.find(
     (lott) => lott.type === data.type
   );
-  const contract: Contract = await new ethers.Contract(
+  const contract: Contract = new ethers.Contract(
     lotteryFromDB?.contractAddress as string,
     data.lotteryData.abi,
     data.signer
@@ -72,4 +72,15 @@ export const getLotteryData = async (data: GetLotteryResponseType) => {
     players: formatedPlayers,
     lotteryFromDB,
   };
+};
+
+export const calculatePriceCuts = (
+  tobeCutted: number | string | undefined,
+  cuttingAmount: number | undefined
+) => {
+  if (tobeCutted && cuttingAmount) {
+    const result =
+      Number(tobeCutted) - (Number(tobeCutted) * cuttingAmount) / 100;
+    return result;
+  }
 };

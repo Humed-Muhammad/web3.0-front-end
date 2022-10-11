@@ -1,10 +1,9 @@
 import { put, select, takeLatest } from "redux-saga/effects";
 import { actions } from "../slice";
-import { BigNumber, ethers, Signer } from "ethers";
+import { BigNumber, Contract, ethers, Signer } from "ethers";
 
 import { ethereum, LOTTERY_TYPE } from "../../../utils/constants";
 import { selectContract } from "../slice/selector";
-import { ContractListTypes } from "../slice/types";
 import {
   formatEther,
   formatPlayers,
@@ -42,7 +41,6 @@ function* checkIfWalletIsConnectedSaga() {
     } else {
       yield put(actions.setConnectedWallet(accounts[0]));
       yield put(actions.getDefaultData());
-      console.log("---I am called");
       yield put(
         actions.setMessages({
           content: "",
@@ -77,9 +75,14 @@ function* requestWalletConnectionsSaga() {
     });
     yield put(actions.finishedWalletConnection());
     yield put(actions.getDefaultData());
-  } catch (error) {
+  } catch ({ message }) {
+    yield put(
+      actions.setMessages({
+        content: message as string,
+        type: "error",
+      })
+    );
     yield put(actions.finishedWalletConnection());
-    alert(error);
   }
 }
 
@@ -91,6 +94,7 @@ function* requestDefaultLottryDatasSaga() {
       route: "",
       isSecureRoute: true,
     });
+
     /* Creating a provider for the ethers.js library. */
     const provider: { getSigner: () => object } =
       yield new ethers.providers.Web3Provider(ethereum);
@@ -104,32 +108,31 @@ function* requestDefaultLottryDatasSaga() {
       signer: signer,
       type: LOTTERY_TYPE.daily,
     });
-    console.log("===========", daily);
-    console.log("---- here");
+
     /**@END */
 
-    // /***@Wekkly  This section*/
-    // const weekly: GetLotteryTypeRes = yield getLotteryData({
-    //   lotteryData: response,
-    //   signer: signer,
-    //   type: LOTTERY_TYPE.weekly,
-    // });
-    // /**@END */
+    /***@Wekkly  This section*/
+    const weekly: GetLotteryTypeRes = yield getLotteryData({
+      lotteryData: response,
+      signer: signer,
+      type: LOTTERY_TYPE.weekly,
+    });
+    /**@END */
 
-    // /***@Monthly  This section*/
-    // const monthly: GetLotteryTypeRes = yield getLotteryData({
-    //   lotteryData: response,
-    //   signer: signer,
-    //   type: LOTTERY_TYPE.monthly,
-    // });
-    // /**@END */
+    /***@Monthly  This section*/
+    const monthly: GetLotteryTypeRes = yield getLotteryData({
+      lotteryData: response,
+      signer: signer,
+      type: LOTTERY_TYPE.monthly,
+    });
+    /**@END */
 
     /* Setting the contracts in the redux store for each lottery type. */
     yield put(
       actions.setContract({
         dailyContract: daily.contract,
-        weeklyContract: undefined,
-        monthlyContract: undefined,
+        weeklyContract: weekly.contract,
+        monthlyContract: monthly.contract,
       })
     );
 
@@ -145,30 +148,30 @@ function* requestDefaultLottryDatasSaga() {
           count: daily.lotteryFromDB?.count,
           priceCut: daily.lotteryFromDB?.priceCut,
           gasCut: daily.lotteryFromDB?.gasCut,
-          initialDepo: daily.lotteryFromDB?.initialDepo,
+          initialPotValue: daily.lotteryFromDB?.initialPotValue,
         },
-        // weekly: {
-        //   currentBettingValue: weekly.bettingValue,
-        //   lotteryPrize: weekly.lotteryPrize,
-        //   players: weekly.players,
-        //   updatedAt: weekly.lotteryFromDB?.updatedAt,
-        //   type: LOTTERY_TYPE.daily,
-        //   count: weekly.lotteryFromDB?.count,
-        //   priceCut: weekly.lotteryFromDB?.priceCut,
-        //   gasCut: weekly.lotteryFromDB?.gasCut,
-        //   initialDepo: weekly.lotteryFromDB?.initialDepo,
-        // },
-        // monthly: {
-        //   currentBettingValue: monthly.bettingValue,
-        //   lotteryPrize: monthly.lotteryPrize,
-        //   players: monthly.players,
-        //   updatedAt: monthly.lotteryFromDB?.updatedAt,
-        //   type: LOTTERY_TYPE.daily,
-        //   count: monthly.lotteryFromDB?.count,
-        //   priceCut: monthly.lotteryFromDB?.priceCut,
-        //   gasCut: monthly.lotteryFromDB?.gasCut,
-        //   initialDepo: monthly.lotteryFromDB?.initialDepo,
-        // },
+        weekly: {
+          currentBettingValue: weekly.bettingValue,
+          lotteryPrize: weekly.lotteryPrize,
+          players: weekly.players,
+          updatedAt: weekly.lotteryFromDB?.updatedAt,
+          type: LOTTERY_TYPE.weekly,
+          count: weekly.lotteryFromDB?.count,
+          priceCut: weekly.lotteryFromDB?.priceCut,
+          gasCut: weekly.lotteryFromDB?.gasCut,
+          initialPotValue: weekly.lotteryFromDB?.initialPotValue,
+        },
+        monthly: {
+          currentBettingValue: monthly.bettingValue,
+          lotteryPrize: monthly.lotteryPrize,
+          players: monthly.players,
+          updatedAt: monthly.lotteryFromDB?.updatedAt,
+          type: LOTTERY_TYPE.monthly,
+          count: monthly.lotteryFromDB?.count,
+          priceCut: monthly.lotteryFromDB?.priceCut,
+          gasCut: monthly.lotteryFromDB?.gasCut,
+          initialPotValue: monthly.lotteryFromDB?.initialPotValue,
+        },
       })
     );
   } catch (error) {
@@ -181,20 +184,20 @@ function* updateSingleLotterySaga(
   action: PayloadAction<keyof typeof LOTTERY_TYPE>
 ) {
   try {
-    const { dailyContract }: ContractListTypes = yield select(
-      (state: RootState) => selectContract(state, action.payload)
+    const contract: Contract = yield select((state: RootState) =>
+      selectContract(state, action.payload)
     );
-    const dailyPlayers: [] = yield dailyContract?.getPlayers();
-    const dailyBalance: BigNumber = yield dailyContract?.getBalance();
-    const dailyBettingValue: BigNumber = yield dailyContract?.bettingValue();
+    const players: [] = yield contract?.getPlayers();
+    const lotteryBalance: BigNumber = yield contract?.getBalance();
+    const bettingValue: BigNumber = yield contract?.bettingValue();
 
-    const formatedDailyPlayers = formatPlayers(dailyPlayers);
+    const formatedDailyPlayers = formatPlayers(players);
     yield put(
       actions.setUpdateSingleLottery({
         data: {
-          lotteryPrize: formatEther(dailyBalance),
+          lotteryPrize: formatEther(lotteryBalance),
           players: formatedDailyPlayers,
-          currentBettingValue: formatEther(dailyBettingValue),
+          currentBettingValue: formatEther(bettingValue),
         },
         type: action.payload,
       })

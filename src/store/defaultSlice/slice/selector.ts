@@ -19,17 +19,15 @@ export const selectContract: (
 ) => Omit<Contract, "none"> | undefined = createSelector(
   [selectDefaultLottery, (_, type: keyof typeof LOTTERY_TYPE) => type],
   (state, type) => {
-    let contract: Contract | undefined = undefined;
     if (type === LOTTERY_TYPE.daily) {
-      contract = state.dailyContract as Contract;
+      return state.dailyContract as Contract;
     } else if (type === LOTTERY_TYPE.weekly) {
-      contract = state.weeklyContract as Contract;
+      return state.weeklyContract as Contract;
     } else if (type === LOTTERY_TYPE.monthly) {
-      contract = state.monthlyContract as Contract;
+      return state.monthlyContract as Contract;
     } else {
       throw new Error(`Invalid type ${type}`);
     }
-    return contract;
   }
 );
 

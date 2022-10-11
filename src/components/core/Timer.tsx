@@ -1,25 +1,32 @@
-import { Flex, Heading, Text } from "@chakra-ui/react";
-import { addMinutes } from "date-fns";
+import { Center, Flex, Heading, Skeleton, Text } from "@chakra-ui/react";
+
 import React from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";
 import { fonts } from "../../utils/theme";
 
 interface Props {
   timeLimit: number;
-  updatedAt: Date;
+  updatedAt: Date | undefined;
   isLoading: boolean;
   uuid4: string;
+  addingFunction: (startTime: Date, timeLimit: number) => Date;
 }
-export const Timer = ({ timeLimit, updatedAt, isLoading, uuid4 }: Props) => {
-  const gameLimit = timeLimit;
-  const startTime = updatedAt && new Date(updatedAt);
+export const Timer = ({
+  timeLimit,
+  updatedAt,
+  isLoading,
+  uuid4,
+  addingFunction,
+}: Props) => {
+  // const gameLimit = timeLimit;
+  const startTime = (updatedAt && new Date(updatedAt)) as Date;
 
   const [endTime, setEndTime] = React.useState<Date | number>(
-    addMinutes(startTime, gameLimit)
+    addingFunction(startTime, timeLimit)
   );
   React.useEffect(() => {
-    if (startTime && gameLimit) {
-      setEndTime(addMinutes(startTime, gameLimit));
+    if (startTime && timeLimit) {
+      setEndTime(addingFunction(startTime, timeLimit));
     }
   }, [timeLimit, updatedAt]);
   const renderer = ({
@@ -36,25 +43,33 @@ export const Timer = ({ timeLimit, updatedAt, isLoading, uuid4 }: Props) => {
       // Render a countdown
       return (
         <>
-          {isLoading ? (
-            <div>Fetching</div>
-          ) : (
-            <>
-              <TimeList showSeparate text="Days" time={days} />
-              <p>:</p>
-              <TimeList showSeparate text="Hours" time={hours} />
-              <p>:</p>
-              <TimeList showSeparate text="Minutes" time={minutes} />
-              <p>:</p>
-              <TimeList text="Seconds" time={seconds} />
-            </>
-          )}
+          <Skeleton w="12" isLoaded={!isLoading}>
+            <TimeList showSeparate text="Days" time={days} />
+          </Skeleton>
+          <Center>
+            <p>:</p>
+          </Center>
+          <Skeleton w="12" isLoaded={!isLoading}>
+            <TimeList showSeparate text="Hours" time={hours} />
+          </Skeleton>
+          <Center>
+            <p>:</p>
+          </Center>
+          <Skeleton w="12" isLoaded={!isLoading}>
+            <TimeList showSeparate text="Minutes" time={minutes} />
+          </Skeleton>
+          <Center>
+            <p>:</p>
+          </Center>
+          <Skeleton w="12" isLoaded={!isLoading}>
+            <TimeList text="Seconds" time={seconds} />
+          </Skeleton>
         </>
       );
     }
   };
   return (
-    <Flex experimental_spaceX="5" mt="5">
+    <Flex experimental_spaceX={["3", "5"]} mt="5">
       <Countdown key={uuid4} date={endTime} renderer={renderer} />
     </Flex>
   );
@@ -71,7 +86,7 @@ const TimeList = ({
   return (
     <Flex direction="column" justify="center" align="center">
       <Heading
-        fontSize={["xl", "xl", "2xl", "2xl", "24px"]}
+        fontSize={["lg", "xl", "2xl", "2xl", "24px"]}
         fontWeight="normal"
         color="gray.600"
         fontFamily={fonts.Digital}

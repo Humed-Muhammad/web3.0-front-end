@@ -13,7 +13,7 @@ export enum LOTTERY_TYPE {
   weekly = "weekly",
   monthly = "monthly",
 }
-export enum LOTTERY_TYPE2 {
+export enum LOTTERY_TYPE_TITLE {
   Hourly = "Hourly",
   Daily = "Daily",
   Monthly = "Monthly",

@@ -9,23 +9,30 @@ import {
   Divider,
   Image,
   Center,
+  useToast,
 } from "@chakra-ui/react";
 import { bg, token } from "../assets/images";
 import { SectionContainer } from "../components/core/SectionContainer";
 import { fonts } from "../utils/theme";
 
 import { ethereum } from "../utils/constants";
-import { actions as defaultActions } from "../store/defaultSlice/slice";
+import {
+  actions,
+  actions as defaultActions,
+} from "../store/defaultSlice/slice";
 import { useDispatch, useSelector } from "react-redux";
-import { Hourly } from "../components/Hourly";
+import { Daily } from "../components/Daily";
 import {
   selectConnectedAccount,
   selectConnectingWallet,
+  selectMessage,
 } from "../store/defaultSlice/slice/selector";
-import { id } from "date-fns/locale";
+import { Weekly } from "../components/Weekly";
+import { Monthly } from "../components/Monthly";
 export const Home = () => {
+  const toast = useToast();
   const connectedAccount = useSelector(selectConnectedAccount);
-  // const isSendingFunds = useSelector(selectDailySendingFunds);
+  const message = useSelector(selectMessage);
   const connectingWallet = useSelector(selectConnectingWallet);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -33,9 +40,50 @@ export const Home = () => {
 
     ethereum.on("accountsChanged", () => {
       dispatch(defaultActions.checkIfWalletIsConnected());
-      dispatch(defaultActions.getDefaultData());
     });
   }, [ethereum]);
+  useEffect(() => {
+    if (message.content) {
+      switch (message.type) {
+        case "error":
+          toast({
+            description: message.content,
+            variant: "left-accent",
+            status: "error",
+          });
+          break;
+        case "success":
+          toast({
+            description: message.content,
+            variant: "left-accent",
+            status: "success",
+          });
+          break;
+        case "warning":
+          toast({
+            description: message.content,
+            variant: "left-accent",
+            status: "warning",
+          });
+          break;
+        case "info":
+          toast({
+            description: message.content,
+            variant: "left-accent",
+            status: "info",
+          });
+          break;
+      }
+    }
+    return () => {
+      dispatch(
+        actions.setMessages({
+          content: "",
+          type: null,
+        })
+      );
+    };
+  }, [message.content]);
   return (
     <Box h="auto" w="full" bg="white">
       <SectionContainer
@@ -52,9 +100,9 @@ export const Home = () => {
           fontWeight="bold"
           color="white"
           fontFamily={fonts.MontserratAlt}
-          fontSize="32px"
+          fontSize={["xl", "3xl", "32px"]}
           position="absolute"
-          top="10"
+          top={["5", "10"]}
         >
           TOMBOLA{" "}
           <Highlight
@@ -62,27 +110,36 @@ export const Home = () => {
             styles={{
               bgGradient: "linear-gradient(to-b, #B97AED, #0157A3)",
               bgClip: "text",
-              fontSize: "4xl",
+              fontSize: ["2xl", "4xl"],
             }}
           >
             WOT
           </Highlight>
         </Text>
 
-        <Flex w="62%" align="center">
-          <Box mt="5" w={["96"]}>
+        <Flex
+          w={["80%", "62%"]}
+          justify={["center", "center", "initial"]}
+          align="center"
+        >
+          <Flex
+            align={["center", "center", "flex-start"]}
+            flexDirection="column"
+            mt="5"
+            w={["96"]}
+          >
             <Heading
               fontFamily={fonts.Montserrat}
               color="white"
               as="h1"
-              fontSize="96px"
+              fontSize={["6xl", "96px"]}
               fontWeight="normal"
-              lineHeight="90px"
+              lineHeight={["60px", "90px"]}
             >
               <Highlight
                 query="Smart"
                 styles={{
-                  fontSize: "96px",
+                  fontSize: "inherit",
                   color: "white",
                   display: "block",
                   fontWeight: "bold",
@@ -91,13 +148,21 @@ export const Home = () => {
                 Smart Lottery
               </Highlight>
             </Heading>
+            {/* <input
+              style={{ color: "red", padding: "4px", width: "200px" }}
+              type="date"
+              id="birthday"
+              name="birthday"
+              autoFocus
+            /> */}
             <Text
               mt="3"
               color="white"
               fontFamily={fonts.Montserrat}
               fontWeight="normal"
               lineHeight="7"
-              textAlign="justify"
+              textAlign={["center", "left", "justify"]}
+              fontSize={["md"]}
             >
               <Highlight
                 query={["blockchain", "cryptocurrecy", "equal chance"]}
@@ -135,6 +200,8 @@ export const Home = () => {
               </Button>
             </Flex>
             <Button
+              isLoading={connectingWallet}
+              loadingText="Connecting to wallet..."
               onClick={() => {
                 if (!connectedAccount) {
                   dispatch(defaultActions.requestWalletConnection());
@@ -144,7 +211,7 @@ export const Home = () => {
             >
               {connectedAccount ? "Connected" : "Connect your wallet"}
             </Button>
-          </Box>
+          </Flex>
           <Image
             ml="10"
             display={["none", null, null, "initial"]}
@@ -154,13 +221,17 @@ export const Home = () => {
         </Flex>
       </SectionContainer>
 
-      <Center h="94vh" position="relative">
-        <Box top="-6" position="absolute">
-          <Hourly />
-        </Box>
+      <Center w="full" h="94vh" position="relative">
+        <Flex justify="center" w="full" top="-6" position="absolute">
+          <Daily />
+        </Flex>
       </Center>
       <SectionContainer py="32" justify="center" bg="meduimGray">
-        <Hourly />
+        <Weekly />
+      </SectionContainer>
+
+      <SectionContainer py="32" justify="center" bg="white">
+        <Monthly />
       </SectionContainer>
     </Box>
   );

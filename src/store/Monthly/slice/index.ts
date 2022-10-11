@@ -2,18 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 import { WeeklyLotteryTypes } from "./types";
 
 const initialState: WeeklyLotteryTypes = {
-  sendingWeeklyFunds: false,
+  sendingMonthlyFunds: false,
 };
 
 export const weeklySlice = createSlice({
   name: "counter",
   initialState,
   reducers: {
-    sendWeeklyFunds: (state) => {
-      state.sendingWeeklyFunds = true;
+    sendMonthlyFunds: (state) => {
+      state.sendingMonthlyFunds = true;
     },
-    finishedSendingFunds: (state) => {
-      state.sendingWeeklyFunds = false;
+    finishedSendingMonthlyFunds: (state) => {
+      state.sendingMonthlyFunds = false;
     },
   },
 });
@@ -21,4 +21,4 @@ export const weeklySlice = createSlice({
 // Action creators are generated for each case reducer function
 export const actions = weeklySlice.actions;
 
-export const weeklyReducer = weeklySlice.reducer;
+export const monthlyReducer = weeklySlice.reducer;

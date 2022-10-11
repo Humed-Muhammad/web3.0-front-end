@@ -4,6 +4,7 @@ import {
   Divider,
   Flex,
   ListItem,
+  Skeleton,
   Text,
   UnorderedList,
 } from "@chakra-ui/react";
@@ -16,54 +17,77 @@ export const DetailCard = (props: DetailCardProps) => {
   return (
     <Box
       position="relative"
-      px="20"
+      px={["2", "2", "3", "20"]}
       bg="white"
       shadow="md"
-      w="7xl"
-      h="3xl"
+      w={["full", "full", "full", "7xl"]}
+      h={["auto", "auto", "auto", "3xl"]}
       rounded="md"
     >
-      <Box top="-12" left="-10" position="absolute">
-        <BetComponent {...props} />
-      </Box>
       <Flex
-        experimental_spaceY="16"
-        h="full"
-        justify="space-around"
-        align="flex-end"
+        top="-12"
+        left={["", "5", "5", "-2", "-4", "-10"]}
+        position={["initial", "initial", "initial", "absolute"]}
+        justify="center"
+      >
+        <BetComponent {...props} />
+      </Flex>
+      <Flex
+        experimental_spaceY={["2", "2", "2", "16"]}
+        h={["auto", "auto", "auto", "full"]}
+        justify={["center", "center", "center", "space-around"]}
+        align={["center", "center", "center", "flex-end"]}
         direction="column"
         pt="16"
+        ml={["initial", "initial", "initial", "5"]}
       >
         <UnorderedList
           experimental_spaceY="2"
-          w="60%"
+          w={["95%", "95%", "95%", "60%"]}
           listStyleType="none"
           mx="0"
         >
           <Divider w="full" borderColor="gray.400" />
           <ListItem display="flex" justifyContent="space-between">
             <Text>Round Number</Text>
-            <Button variant="small">01</Button>
+            <Skeleton isLoaded={!props.isFetchingData}>
+              <Button variant="small">{props.roundNumber}</Button>
+            </Skeleton>
           </ListItem>
           <Divider w="full" borderColor="gray.400" />
           <ListItem display="flex" justifyContent="space-between">
             <Text>Initial Pot</Text>
-            <Button variant="small">0.9 ETH</Button>
+            <Skeleton isLoaded={!props.isFetchingData}>
+              <Button variant="small">{props.initialPotValue} ETH</Button>
+            </Skeleton>
           </ListItem>
           <Divider w="full" borderColor="gray.400" />
           <ListItem display="flex" justifyContent="space-between">
             <Text>Next Round initial pot</Text>
-            <Button variant="small">0.7 ETH</Button>
+            <Skeleton isLoaded={!props.isFetchingData}>
+              <Button variant="small">0.7 ETH</Button>
+            </Skeleton>
           </ListItem>
           <Divider w="full" borderColor="gray.400" />
           <ListItem display="flex" justifyContent="space-between">
             <Text>Participants</Text>
-            <Button variant="small">42</Button>
+            <Skeleton isLoaded={!props.isFetchingData}>
+              <Button variant="small">{props.participants}</Button>
+            </Skeleton>
           </ListItem>
           <Divider w="full" borderColor="gray.400" />
         </UnorderedList>
-        <Flex justify="space-around" w="full">
-          <UnorderedList w="35%" mt="36" experimental_spaceY="3">
+        <Flex
+          direction={["column", "column", "column", "row"]}
+          justify="space-around"
+          w="full"
+          align={["center", "center", "center", "initial"]}
+        >
+          <UnorderedList
+            w={["auto", "auto", "auto", "35%"]}
+            mt="36"
+            experimental_spaceY="3"
+          >
             <Text fontWeight="semibold">Playing rules</Text>
             <ListItem>
               <Text>
@@ -77,13 +101,8 @@ export const DetailCard = (props: DetailCardProps) => {
           </UnorderedList>
           <ChakraTable
             border="none"
-            w="60%"
-            data={[
-              { address: "9489374897389473897489374897" },
-              { address: "9489374897389473897489374897" },
-              { address: "9489374897389473897489374897" },
-              { address: "9489374897389473897489374897" },
-            ]}
+            w={["95%", "95%", "95%", "60%"]}
+            data={props.players}
           />
         </Flex>
       </Flex>

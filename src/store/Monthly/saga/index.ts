@@ -3,10 +3,7 @@ import { actions } from "../slice";
 import { actions as defaultActions } from "../../defaultSlice/slice";
 import { BigNumber, ethers, ContractTransaction, Contract } from "ethers";
 
-import {
-  ContractListTypes,
-  DefaultLotteryTypes,
-} from "../../defaultSlice/slice/types";
+import { DefaultLotteryTypes } from "../../defaultSlice/slice/types";
 import {
   selectConnectedAccount,
   selectContract,
@@ -19,30 +16,31 @@ interface EtherWindow extends Window {
   ethereum?: any;
 }
 
-function* sendingDailyFundsSaga() {
+function* sendingMonthlyFundsSaga() {
   const connectedAccount: string = yield select(selectConnectedAccount);
   try {
     const { ethereum }: EtherWindow = yield window;
     if (!ethereum) return alert("Please install metamask!");
-    const dailyContract: Contract = yield select((state: RootState) =>
-      selectContract(state, LOTTERY_TYPE.daily)
+    const monthlyContract: Contract = yield select((state: RootState) =>
+      selectContract(state, LOTTERY_TYPE.monthly)
     );
     const defaultLotteryData: DefaultLotteryTypes = yield select(
       selectLotteryDatas
     );
     const parsedAmount: BigNumber = yield ethers.utils.parseEther(
-      `${defaultLotteryData.daily?.currentBettingValue}`
+      `${defaultLotteryData.monthly?.currentBettingValue}`
     );
-
-    console.log(dailyContract);
-    const transactionResponse: ContractTransaction = yield dailyContract?.bet({
-      from: connectedAccount,
-      value: parsedAmount,
-      gasLimit: 300000,
-    });
+    console.log(monthlyContract);
+    const transactionResponse: ContractTransaction = yield monthlyContract?.bet(
+      {
+        from: connectedAccount,
+        value: parsedAmount,
+        gasLimit: 300000,
+      }
+    );
     yield transactionResponse.wait();
     if (transactionResponse) {
-      yield put(actions.finishedSendingFunds());
+      yield put(actions.finishedSendingMonthlyFunds());
       yield put(
         defaultActions.setMessages({
           content: "Your transaction was successfully transfered.",
@@ -74,10 +72,10 @@ function* sendingDailyFundsSaga() {
         })
       );
     }
-    yield put(actions.finishedSendingFunds());
+    yield put(actions.finishedSendingMonthlyFunds());
   }
 }
 
-export function* dailyLotterySaga() {
-  yield takeLatest(actions.sendDailyFunds.type, sendingDailyFundsSaga);
+export function* monthlyLotterySaga() {
+  yield takeLatest(actions.sendMonthlyFunds.type, sendingMonthlyFundsSaga);
 }

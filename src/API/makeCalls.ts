@@ -57,7 +57,7 @@ const makeCall = async (config: IAPICallConfig) => {
 
     if (error instanceof APIError) throw error;
 
-    throw new APIError(500, "Something went wrong");
+    throw new APIError(500, error.message);
   }
 };
 

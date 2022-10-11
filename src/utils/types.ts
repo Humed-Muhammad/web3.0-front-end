@@ -1,6 +1,7 @@
+import { BoxProps } from "@chakra-ui/react";
 import { BigNumber, Contract } from "ethers";
 import { FetchedLottery } from "../store/commonTypes";
-import { LOTTERY_TYPE2 } from "./constants";
+import { LOTTERY_TYPE_TITLE } from "./constants";
 
 export interface TableDataTypes {
   address?: string;
@@ -15,15 +16,20 @@ export interface GetLotteryTypeRes {
   lotteryFromDB: FetchedLottery | undefined;
 }
 
-export interface DetailCardProps {
-  type: keyof typeof LOTTERY_TYPE2;
+export interface DetailCardProps extends BoxProps {
+  type: keyof typeof LOTTERY_TYPE_TITLE;
   totalAmount: string | undefined;
   winingPrize: string | undefined;
   currentBettingValue: string | undefined;
   sendFund: () => void;
   isSendingFunds: boolean;
   isFetchingData: boolean;
-  updatedAt: string | undefined;
+  updatedAt: Date | undefined;
   roundNumber: number | undefined;
-  initialDepo: number | undefined;
+  initialPotValue: number | undefined;
+  participants: number | undefined;
+  timeLimit: number;
+  addingFunction: (startTime: Date, timeLimit: number) => Date;
+  players: TableDataTypes[] | undefined;
+  priceCut: number | undefined;
 }

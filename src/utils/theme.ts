@@ -31,24 +31,41 @@ export const theme = extendTheme({
     },
   },
   components: {
+    Link: {
+      baseStyle: {
+        color: "#4FB5FF",
+      },
+    },
+    Box: {
+      baseStyle: {
+        transition: "all 0.2s ease-out",
+      },
+    },
+    Flex: {
+      baseStyle: {
+        transition: "all 0.2s ease-out",
+      },
+    },
     Text: {
       baseStyle: {
         fontWeight: "300",
         fontFamily: "Poppins",
-        fontSize: "16px",
+        fontSize: ["xs", "lg", "16px"],
         color: "#14113D",
+        transition: "all 0.2s ease-out",
       },
     },
     Button: {
       baseStyle: {
         color: "#FFFFFF",
         fontFamiliy: "Montserrat, sans-serif",
+        transition: "all 0.2s ease-out",
       },
       variants: {
         primary: {
-          height: "54px",
-          width: "280px",
-          fontSize: "20px",
+          height: ["35px", "54px"],
+          width: ["230px", "230px", "280px"],
+          fontSize: ["md", "20px"],
           borderRadius: "30px",
           fontWeight: "600",
           py: "14px",
@@ -56,9 +73,9 @@ export const theme = extendTheme({
             " linear-gradient(269.74deg, #24DFF9 0.22%, #C446F9 99.83%)",
         },
         large: {
-          height: "66px",
-          width: "343px",
-          fontSize: "20px",
+          height: ["40px", "66px"],
+          width: ["200px", "260px", "343px"],
+          fontSize: ["md", "lg", "xl", "20px"],
           borderRadius: "30px",
           fontWeight: "600",
           py: "20px",
@@ -66,9 +83,9 @@ export const theme = extendTheme({
             " linear-gradient(269.74deg, #24DFF9 0.22%, #C446F9 99.83%)",
         },
         small: {
-          width: "124.07px",
+          width: ["100px", "112px", "124.07px"],
           height: "29px",
-          fontSize: "16px",
+          fontSize: ["sm", "md", "16px"],
           borderRadius: "15px",
           fontWeight: "500",
           py: "3px",

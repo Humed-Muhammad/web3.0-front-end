@@ -1,12 +1,9 @@
 import { put, select, takeLatest } from "redux-saga/effects";
 import { actions } from "../slice";
 import { actions as defaultActions } from "../../defaultSlice/slice";
-import { BigNumber, ethers, ContractTransaction } from "ethers";
+import { BigNumber, ethers, ContractTransaction, Contract } from "ethers";
 
-import {
-  ContractListTypes,
-  DefaultLotteryTypes,
-} from "../../defaultSlice/slice/types";
+import { DefaultLotteryTypes } from "../../defaultSlice/slice/types";
 import {
   selectConnectedAccount,
   selectContract,
@@ -19,13 +16,13 @@ interface EtherWindow extends Window {
   ethereum?: any;
 }
 
-function* sendingFundsSaga() {
+function* sendingWeeklyFundsSaga() {
   const connectedAccount: string = yield select(selectConnectedAccount);
   try {
     const { ethereum }: EtherWindow = yield window;
     if (!ethereum) return alert("Please install metamask!");
-    const { weeklyContract }: ContractListTypes = yield select(
-      (state: RootState) => selectContract(state, LOTTERY_TYPE.weekly)
+    const weeklyContract: Contract = yield select((state: RootState) =>
+      selectContract(state, LOTTERY_TYPE.weekly)
     );
     const defaultLotteryData: DefaultLotteryTypes = yield select(
       selectLotteryDatas
@@ -33,7 +30,7 @@ function* sendingFundsSaga() {
     const parsedAmount: BigNumber = yield ethers.utils.parseEther(
       `${defaultLotteryData.weekly?.currentBettingValue}`
     );
-
+    console.log(weeklyContract);
     const transactionResponse: ContractTransaction = yield weeklyContract?.bet({
       from: connectedAccount,
       value: parsedAmount,
@@ -78,5 +75,5 @@ function* sendingFundsSaga() {
 }
 
 export function* weeklyLotterySaga() {
-  yield takeLatest(actions.sendFunds.type, sendingFundsSaga);
+  yield takeLatest(actions.sendWeeklyFunds.type, sendingWeeklyFundsSaga);
 }

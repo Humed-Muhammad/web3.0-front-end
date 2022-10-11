@@ -5,27 +5,26 @@ import {
   selectAllDefaultLottery,
   selectContract,
   selectLotteryDatas,
-  selectMessage,
 } from "../store/defaultSlice/slice/selector";
-import { LOTTERY_TYPE, LOTTERY_TYPE2 } from "../utils/constants";
+import { LOTTERY_TYPE, LOTTERY_TYPE_TITLE } from "../utils/constants";
 import { DetailCard } from "./DetailCard";
 import { actions as defaultActions } from "../store/defaultSlice/slice";
-import { actions as weeklyActions } from "../store/Weekly/slice";
-import { selectWeeklySendingFunds } from "../store/Weekly/slice/selector";
+import { actions as dailyActions } from "../store/Daily/slice";
+import { selectDailySendingFunds } from "../store/Daily/slice/selector";
+import { addMinutes } from "date-fns";
+
 export const Daily = () => {
   const dispatch = useDispatch();
-  const { weekly } = useSelector(selectLotteryDatas);
-  const isSendingFunds = useSelector(selectWeeklySendingFunds);
+  const { daily } = useSelector(selectLotteryDatas);
+  const isSendingFunds = useSelector(selectDailySendingFunds);
   const contract = useSelector((state: RootState) =>
-    selectContract(state, LOTTERY_TYPE.weekly)
+    selectContract(state, LOTTERY_TYPE.daily)
   );
   const { fetchingDatas } = useSelector(selectAllDefaultLottery);
 
-  const message = useSelector(selectMessage);
-
   useEffect(() => {
     contract?.on("LogPlayers", () => {
-      dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.weekly));
+      dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.daily));
     });
     contract?.on("LogWinner", (player: string) => {
       console.log(`Winner is picked ${player}`);
@@ -42,13 +41,23 @@ export const Daily = () => {
   }, [contract]);
   return (
     <DetailCard
-      currentBettingValue={weekly?.currentBettingValue}
-      totalAmount={weekly?.lotteryPrize}
-      type={LOTTERY_TYPE2.Daily}
-      winingPrize={weekly?.lotteryPrize}
-      sendFund={() => dispatch(weeklyActions.sendFunds())}
+      w={["6xl", "7xl"]}
+      mx="3"
+      currentBettingValue={daily?.currentBettingValue}
+      totalAmount={daily?.lotteryPrize}
+      type={LOTTERY_TYPE_TITLE.Hourly}
+      winingPrize={daily?.lotteryPrize}
+      sendFund={() => dispatch(dailyActions.sendDailyFunds())}
       isSendingFunds={isSendingFunds}
       isFetchingData={fetchingDatas}
+      initialPotValue={daily?.initialPotValue}
+      roundNumber={daily?.count}
+      updatedAt={daily?.updatedAt}
+      participants={daily?.players?.length}
+      addingFunction={addMinutes}
+      timeLimit={60}
+      players={daily?.players}
+      priceCut={daily?.priceCut}
     />
   );
 };

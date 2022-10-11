@@ -1,3 +1,3 @@
 export interface WeeklyLotteryTypes {
-  sendingWeeklyFunds: boolean;
+  sendingMonthlyFunds: boolean;
 }

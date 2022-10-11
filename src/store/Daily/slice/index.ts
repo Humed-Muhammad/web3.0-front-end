@@ -9,7 +9,7 @@ export const counterSlice = createSlice({
   name: "counter",
   initialState,
   reducers: {
-    sendFunds: (state) => {
+    sendDailyFunds: (state) => {
       state.sendingFunds = true;
     },
     finishedSendingFunds: (state) => {

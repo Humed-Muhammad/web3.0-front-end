@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Link,
   Spinner,
   Table,
   TableContainer,
@@ -13,7 +14,6 @@ import {
 } from "@chakra-ui/react";
 import { TableDataTypes } from "../../utils/types";
 import styled from "@emotion/styled";
-import { dateFormater } from "../../utils/helpers";
 import { selectConnectedAccount } from "../../store/defaultSlice/slice/selector";
 import { useSelector } from "react-redux";
 
@@ -25,7 +25,6 @@ const StyledTableContainer = styled(TableContainer)({
   "::-webkit-scrollbar": {
     height: "5px",
     width: "5px",
-    // display: "none",
   },
   "::-webkit-scrollbar-track": {
     background: "#f1f1f1",
@@ -57,10 +56,17 @@ export const ChakraTable = ({ data, ...rest }: Props) => {
         </Thead>
 
         <Tbody>
-          {data?.map((item) => (
-            <Tr key={item?.address}>
-              <Td>{item.address}</Td>
-              <Td>{item?.timestamp ? dateFormater(item?.timestamp) : ""}</Td>
+          {data?.map((item, index) => (
+            <Tr key={index}>
+              <Td w="64">{item.address}</Td>
+              <Td>
+                <Link
+                  href={`https://goerli.etherscan.io/address/${item.address}`}
+                  target="_blank"
+                >
+                  Link
+                </Link>
+              </Td>
             </Tr>
           ))}
         </Tbody>

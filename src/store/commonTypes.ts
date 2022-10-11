@@ -15,7 +15,7 @@ export interface FetchedLottery {
   count: number;
   gasCut: number;
   priceCut: number;
-  initialDepo: number;
+  initialPotValue: number;
 }
 export interface FetchedApiRespose {
   abi: object[];

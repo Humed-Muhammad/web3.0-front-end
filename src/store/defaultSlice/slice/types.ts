@@ -16,7 +16,7 @@ export interface CommonDefaultDataTypes {
   count?: number;
   priceCut?: number;
   gasCut?: number;
-  initialDepo?: number;
+  initialPotValue?: number;
 }
 
 export interface DefaultLotteryTypes {
