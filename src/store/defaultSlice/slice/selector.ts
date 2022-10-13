@@ -31,8 +31,11 @@ export const selectContract: (
   }
 );
 
-export const selectConnectedAccount: (state: RootState) => string =
+export const selectConnectedAccount: (state: RootState) => string | undefined =
   createSelector([selectDefaultLottery], (state) => state.connectedAccount);
+
+export const selectIfWalletIsConnected: (state: RootState) => boolean =
+  createSelector([selectDefaultLottery], (state) => state.isWalletConnected);
 
 export const selectMessage: (state: RootState) => MessageTypes = createSelector(
   [selectDefaultLottery],

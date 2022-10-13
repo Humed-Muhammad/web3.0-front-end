@@ -110,7 +110,8 @@ export const Home = () => {
             styles={{
               bgGradient: "linear-gradient(to-b, #B97AED, #0157A3)",
               bgClip: "text",
-              fontSize: ["2xl", "4xl"],
+              fontSize: ["3xl", "4xl"],
+              fontWeight: ["medium", "inherit"],
             }}
           >
             WOT
@@ -132,7 +133,7 @@ export const Home = () => {
               fontFamily={fonts.Montserrat}
               color="white"
               as="h1"
-              fontSize={["6xl", "96px"]}
+              fontSize={["4xl", "96px"]}
               fontWeight="normal"
               lineHeight={["60px", "90px"]}
             >
@@ -141,20 +142,19 @@ export const Home = () => {
                 styles={{
                   fontSize: "inherit",
                   color: "white",
-                  display: "block",
+                  display: ["initial", "block"],
                   fontWeight: "bold",
                 }}
               >
                 Smart Lottery
               </Highlight>
             </Heading>
-            {/* <input
-              style={{ color: "red", padding: "4px", width: "200px" }}
-              type="date"
-              id="birthday"
-              name="birthday"
-              autoFocus
-            /> */}
+            <Image
+              ml="10"
+              display={["initial", null, null, "none"]}
+              src={token}
+              alt="token coin"
+            />
             <Text
               mt="3"
               color="white"
@@ -162,7 +162,7 @@ export const Home = () => {
               fontWeight="normal"
               lineHeight="7"
               textAlign={["center", "left", "justify"]}
-              fontSize={["md"]}
+              fontSize={["sm", "md"]}
             >
               <Highlight
                 query={["blockchain", "cryptocurrecy", "equal chance"]}
@@ -177,7 +177,11 @@ export const Home = () => {
               </Highlight>
             </Text>
             <Flex mb="10" mt="6" experimental_spaceX="5">
-              <Button fontWeight="bold" color="secondary" variant="link">
+              <Button
+                fontWeight={["normal", "bold"]}
+                color="secondary"
+                variant="link"
+              >
                 Hourly
               </Button>
               <Divider
@@ -186,7 +190,11 @@ export const Home = () => {
                 orientation="vertical"
                 h="35px"
               />
-              <Button fontWeight="bold" color="secondary" variant="link">
+              <Button
+                fontWeight={["normal", "bold"]}
+                color="secondary"
+                variant="link"
+              >
                 Daily
               </Button>
               <Divider
@@ -195,7 +203,11 @@ export const Home = () => {
                 h="35px"
                 border="1px"
               />
-              <Button fontWeight="bold" color="secondary" variant="link">
+              <Button
+                fontWeight={["normal", "bold"]}
+                color="secondary"
+                variant="link"
+              >
                 Monthly
               </Button>
             </Flex>
@@ -221,11 +233,23 @@ export const Home = () => {
         </Flex>
       </SectionContainer>
 
-      <Center w="full" h="94vh" position="relative">
-        <Flex justify="center" w="full" top="-6" position="absolute">
+      <SectionContainer
+        h={["auto", "auto", "auto", "100vh"]}
+        py={["0", "32"]}
+        justify="center"
+        bg="white"
+        position="relative"
+      >
+        <Flex
+          justify="center"
+          h="auto"
+          w="full"
+          top="-6"
+          position={["initial", "initial", "absolute"]}
+        >
           <Daily />
         </Flex>
-      </Center>
+      </SectionContainer>
       <SectionContainer py="32" justify="center" bg="meduimGray">
         <Weekly />
       </SectionContainer>

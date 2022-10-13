@@ -22,7 +22,8 @@ const initialState: DefaultSliceTypes = {
   monthlyContract: undefined,
   // contractAddress: "",
   abi: undefined,
-  connectedAccount: "",
+  connectedAccount: undefined,
+  isWalletConnected: false,
   connectingWallet: false,
   checkingIfWalletIsConnected: false,
   message: {
@@ -44,6 +45,7 @@ export const defaultSlice = createSlice({
     },
     finishedWalletConnection: (state) => {
       state.connectingWallet = false;
+      state.isWalletConnected = true;
     },
     checkIfWalletIsConnected: (state) => {
       state.checkingIfWalletIsConnected = true;
@@ -51,6 +53,9 @@ export const defaultSlice = createSlice({
     setConnectedWallet: (state, action: PayloadAction<string>) => {
       state.connectedAccount = action.payload;
       state.checkingIfWalletIsConnected = false;
+    },
+    setIsWalletIsConnected: (state, action: PayloadAction<boolean>) => {
+      state.isWalletConnected = action.payload;
     },
     requestContarct: (state) => {
       state.gettingContarct = true;

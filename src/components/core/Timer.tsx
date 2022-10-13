@@ -2,6 +2,8 @@ import { Center, Flex, Heading, Skeleton, Text } from "@chakra-ui/react";
 
 import React from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";
+import { useSelector } from "react-redux";
+import { selectIfWalletIsConnected } from "../../store/defaultSlice/slice/selector";
 import { fonts } from "../../utils/theme";
 
 interface Props {
@@ -20,7 +22,7 @@ export const Timer = ({
 }: Props) => {
   // const gameLimit = timeLimit;
   const startTime = (updatedAt && new Date(updatedAt)) as Date;
-
+  const isWalletConnected = useSelector(selectIfWalletIsConnected);
   const [endTime, setEndTime] = React.useState<Date | number>(
     addingFunction(startTime, timeLimit)
   );
@@ -38,30 +40,30 @@ export const Timer = ({
   }: CountdownRenderProps) => {
     if (completed) {
       // Render a completed state
-      return <div>Time Endined</div>;
+      return <Text fontWeight="semibold">Time Endined</Text>;
     } else {
       // Render a countdown
       return (
         <>
-          <Skeleton w="12" isLoaded={!isLoading}>
+          <Skeleton w="12" isLoaded={!isLoading && isWalletConnected}>
             <TimeList showSeparate text="Days" time={days} />
           </Skeleton>
           <Center>
             <p>:</p>
           </Center>
-          <Skeleton w="12" isLoaded={!isLoading}>
+          <Skeleton w="12" isLoaded={!isLoading && isWalletConnected}>
             <TimeList showSeparate text="Hours" time={hours} />
           </Skeleton>
           <Center>
             <p>:</p>
           </Center>
-          <Skeleton w="12" isLoaded={!isLoading}>
+          <Skeleton w="12" isLoaded={!isLoading && isWalletConnected}>
             <TimeList showSeparate text="Minutes" time={minutes} />
           </Skeleton>
           <Center>
             <p>:</p>
           </Center>
-          <Skeleton w="12" isLoaded={!isLoading}>
+          <Skeleton w="12" isLoaded={!isLoading && isWalletConnected}>
             <TimeList text="Seconds" time={seconds} />
           </Skeleton>
         </>

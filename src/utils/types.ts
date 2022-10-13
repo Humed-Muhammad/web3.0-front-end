@@ -32,4 +32,8 @@ export interface DetailCardProps extends BoxProps {
   addingFunction: (startTime: Date, timeLimit: number) => Date;
   players: TableDataTypes[] | undefined;
   priceCut: number | undefined;
+  gasCut: number | undefined;
+  isWinnerPicked: boolean;
+  winnerAddress: string | undefined;
+  amountWinned: BigNumber | undefined;
 }

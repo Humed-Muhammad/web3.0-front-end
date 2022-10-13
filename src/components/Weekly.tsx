@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import {
@@ -10,13 +10,28 @@ import { LOTTERY_TYPE, LOTTERY_TYPE_TITLE } from "../utils/constants";
 import { DetailCard } from "./DetailCard";
 import { actions as defaultActions } from "../store/defaultSlice/slice";
 import { actions as weeklyActions } from "../store/Weekly/slice";
-import { selectWeeklySendingFunds } from "../store/Weekly/slice/selector";
+import {
+  selectIfWeeklyLotteryWinnerIsSelected,
+  selectWeeklySendingFunds,
+} from "../store/Weekly/slice/selector";
 import { addHours } from "date-fns";
+import { BigNumber } from "ethers";
 
 export const Weekly = () => {
+  const [winnerData, setWinnerData] = useState<{
+    amount: BigNumber | undefined;
+    address: string;
+  }>({
+    address: "",
+    amount: undefined,
+  });
+
   const dispatch = useDispatch();
   const { weekly } = useSelector(selectLotteryDatas);
   const isSendingFunds = useSelector(selectWeeklySendingFunds);
+  const isWeeklyWinnerPicked = useSelector(
+    selectIfWeeklyLotteryWinnerIsSelected
+  );
   const contract = useSelector((state: RootState) =>
     selectContract(state, LOTTERY_TYPE.weekly)
   );
@@ -26,9 +41,12 @@ export const Weekly = () => {
     contract?.on("LogPlayers", () => {
       dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.weekly));
     });
-    contract?.on("LogWinner", (player: string) => {
-      console.log(`Winner is picked ${player}`);
-
+    contract?.on("LogWinner", (player: string, amountWinned: BigNumber) => {
+      setWinnerData({
+        address: player,
+        amount: amountWinned,
+      });
+      dispatch(weeklyActions.setIsWeeklyLotteryWinnerPicked(true));
       dispatch(defaultActions.updateTime("weekly"));
       dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.weekly));
       dispatch(
@@ -37,6 +55,9 @@ export const Weekly = () => {
           type: "success",
         })
       );
+      setTimeout(() => {
+        dispatch(weeklyActions.setIsWeeklyLotteryWinnerPicked(false));
+      }, 5000);
     });
   }, [contract]);
   return (
@@ -56,6 +77,10 @@ export const Weekly = () => {
       participants={weekly?.players?.length}
       players={weekly?.players}
       priceCut={weekly?.priceCut}
+      gasCut={weekly?.gasCut}
+      isWinnerPicked={isWeeklyWinnerPicked}
+      amountWinned={winnerData.amount}
+      winnerAddress={winnerData.address}
     />
   );
 };

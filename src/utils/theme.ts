@@ -50,9 +50,18 @@ export const theme = extendTheme({
       baseStyle: {
         fontWeight: "300",
         fontFamily: "Poppins",
-        fontSize: ["xs", "lg", "16px"],
+        fontSize: ["md", "lg", "16px"],
         color: "#14113D",
         transition: "all 0.2s ease-out",
+      },
+      variants: {
+        truncated: {
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          w: "16",
+          textAlign: "center",
+        },
       },
     },
     Button: {
@@ -63,8 +72,8 @@ export const theme = extendTheme({
       },
       variants: {
         primary: {
-          height: ["35px", "54px"],
-          width: ["230px", "230px", "280px"],
+          height: ["42px", "54px"],
+          width: ["200px", "230px", "280px"],
           fontSize: ["md", "20px"],
           borderRadius: "30px",
           fontWeight: "600",
@@ -73,7 +82,7 @@ export const theme = extendTheme({
             " linear-gradient(269.74deg, #24DFF9 0.22%, #C446F9 99.83%)",
         },
         large: {
-          height: ["40px", "66px"],
+          height: ["49px", "66px"],
           width: ["200px", "260px", "343px"],
           fontSize: ["md", "lg", "xl", "20px"],
           borderRadius: "30px",

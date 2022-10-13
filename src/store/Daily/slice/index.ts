@@ -1,11 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { DailyLotteryTypes } from "./types";
 
 const initialState: DailyLotteryTypes = {
   sendingFunds: false,
+  dailyWinnerIsPicked: false,
 };
 
-export const counterSlice = createSlice({
+export const dailySlice = createSlice({
   name: "counter",
   initialState,
   reducers: {
@@ -15,10 +16,13 @@ export const counterSlice = createSlice({
     finishedSendingFunds: (state) => {
       state.sendingFunds = false;
     },
+    setIsDailyLotteryWinnerPicked: (state, action: PayloadAction<boolean>) => {
+      state.dailyWinnerIsPicked = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const actions = counterSlice.actions;
+export const actions = dailySlice.actions;
 
-export const dailyReducer = counterSlice.reducer;
+export const dailyReducer = dailySlice.reducer;

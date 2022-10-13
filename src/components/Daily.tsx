@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import {
@@ -10,13 +10,25 @@ import { LOTTERY_TYPE, LOTTERY_TYPE_TITLE } from "../utils/constants";
 import { DetailCard } from "./DetailCard";
 import { actions as defaultActions } from "../store/defaultSlice/slice";
 import { actions as dailyActions } from "../store/Daily/slice";
-import { selectDailySendingFunds } from "../store/Daily/slice/selector";
+import {
+  selectDailySendingFunds,
+  selectIfDailyLotteryWinnerIsSelected,
+} from "../store/Daily/slice/selector";
 import { addMinutes } from "date-fns";
+import { BigNumber } from "ethers";
 
 export const Daily = () => {
+  const [winnerData, setWinnerData] = useState<{
+    amount: BigNumber | undefined;
+    address: string;
+  }>({
+    address: "",
+    amount: undefined,
+  });
   const dispatch = useDispatch();
   const { daily } = useSelector(selectLotteryDatas);
   const isSendingFunds = useSelector(selectDailySendingFunds);
+  const isDailyWinnerPicked = useSelector(selectIfDailyLotteryWinnerIsSelected);
   const contract = useSelector((state: RootState) =>
     selectContract(state, LOTTERY_TYPE.daily)
   );
@@ -26,9 +38,12 @@ export const Daily = () => {
     contract?.on("LogPlayers", () => {
       dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.daily));
     });
-    contract?.on("LogWinner", (player: string) => {
-      console.log(`Winner is picked ${player}`);
-
+    contract?.on("LogWinner", (player: string, amountWinned: BigNumber) => {
+      setWinnerData({
+        address: player,
+        amount: amountWinned,
+      });
+      dispatch(dailyActions.setIsDailyLotteryWinnerPicked(true));
       dispatch(defaultActions.updateTime("daily"));
       dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.daily));
       dispatch(
@@ -37,6 +52,9 @@ export const Daily = () => {
           type: "success",
         })
       );
+      setTimeout(() => {
+        dispatch(dailyActions.setIsDailyLotteryWinnerPicked(false));
+      }, 5000);
     });
   }, [contract]);
   return (
@@ -58,6 +76,10 @@ export const Daily = () => {
       timeLimit={60}
       players={daily?.players}
       priceCut={daily?.priceCut}
+      gasCut={daily?.gasCut}
+      isWinnerPicked={isDailyWinnerPicked}
+      amountWinned={winnerData.amount}
+      winnerAddress={winnerData.address}
     />
   );
 };

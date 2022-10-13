@@ -9,25 +9,32 @@ import {
   UnorderedList,
 } from "@chakra-ui/react";
 import React from "react";
+import { calculatePriceCuts } from "../utils/helpers";
 import { DetailCardProps } from "../utils/types";
 import { BetComponent } from "./BetComponent";
 import { ChakraTable } from "./core/Table";
+import { TooltipHolder } from "./core/Tooltip";
+import { Winner } from "./Winner";
 
 export const DetailCard = (props: DetailCardProps) => {
+  const offPrice = calculatePriceCuts(props.totalAmount, props.priceCut);
+  const nextRoundPot = calculatePriceCuts(offPrice, props.gasCut);
   return (
     <Box
       position="relative"
       px={["2", "2", "3", "20"]}
-      bg="white"
-      shadow="md"
+      bg={["transparent", "white"]}
+      shadow={["none", "md"]}
       w={["full", "full", "full", "7xl"]}
       h={["auto", "auto", "auto", "3xl"]}
       rounded="md"
     >
       <Flex
-        top="-12"
-        left={["", "5", "5", "-2", "-4", "-10"]}
-        position={["initial", "initial", "initial", "absolute"]}
+        top={props.top || "-12"}
+        left={props.left || ["", "5", "5", "-2", "-4", "-10"]}
+        position={
+          props.position || ["initial", "initial", "initial", "absolute"]
+        }
         justify="center"
       >
         <BetComponent {...props} />
@@ -47,32 +54,69 @@ export const DetailCard = (props: DetailCardProps) => {
           listStyleType="none"
           mx="0"
         >
+          {props.isWinnerPicked ? (
+            <Winner winnerAddress={props.winnerAddress} />
+          ) : null}
           <Divider w="full" borderColor="gray.400" />
           <ListItem display="flex" justifyContent="space-between">
             <Text>Round Number</Text>
-            <Skeleton isLoaded={!props.isFetchingData}>
+            <Skeleton isLoaded={Boolean(props.roundNumber)}>
               <Button variant="small">{props.roundNumber}</Button>
             </Skeleton>
           </ListItem>
           <Divider w="full" borderColor="gray.400" />
           <ListItem display="flex" justifyContent="space-between">
             <Text>Initial Pot</Text>
-            <Skeleton isLoaded={!props.isFetchingData}>
-              <Button variant="small">{props.initialPotValue} ETH</Button>
+            <Skeleton isLoaded={Boolean(props.initialPotValue)}>
+              <Button variant="small">
+                <TooltipHolder value={`${props.initialPotValue} ETH`}>
+                  <Text
+                    color="inherit"
+                    fontFamily="inherit"
+                    fontWeight="inherit"
+                    variant="truncated"
+                  >
+                    {props.initialPotValue} ETH
+                  </Text>
+                </TooltipHolder>
+              </Button>
             </Skeleton>
           </ListItem>
           <Divider w="full" borderColor="gray.400" />
           <ListItem display="flex" justifyContent="space-between">
             <Text>Next Round initial pot</Text>
             <Skeleton isLoaded={!props.isFetchingData}>
-              <Button variant="small">0.7 ETH</Button>
+              <Button variant="small">
+                <TooltipHolder value={`${nextRoundPot} ETH`}>
+                  <Text
+                    color="inherit"
+                    fontFamily="inherit"
+                    fontWeight="inherit"
+                    variant="truncated"
+                  >
+                    {nextRoundPot} ETH
+                  </Text>
+                </TooltipHolder>
+              </Button>
             </Skeleton>
           </ListItem>
           <Divider w="full" borderColor="gray.400" />
           <ListItem display="flex" justifyContent="space-between">
             <Text>Participants</Text>
-            <Skeleton isLoaded={!props.isFetchingData}>
-              <Button variant="small">{props.participants}</Button>
+            <Skeleton isLoaded={Boolean(!props.isFetchingData)}>
+              <Button variant="small">
+                <TooltipHolder value={props.participants}>
+                  <Text
+                    color="inherit"
+                    fontFamily="inherit"
+                    fontWeight="inherit"
+                    mr="1"
+                    variant="truncated"
+                  >
+                    {props.participants}
+                  </Text>
+                </TooltipHolder>
+              </Button>
             </Skeleton>
           </ListItem>
           <Divider w="full" borderColor="gray.400" />

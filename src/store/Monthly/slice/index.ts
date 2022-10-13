@@ -1,8 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { WeeklyLotteryTypes } from "./types";
 
 const initialState: WeeklyLotteryTypes = {
   sendingMonthlyFunds: false,
+  monthlyWinnerIsPicked: false,
 };
 
 export const weeklySlice = createSlice({
@@ -14,6 +15,12 @@ export const weeklySlice = createSlice({
     },
     finishedSendingMonthlyFunds: (state) => {
       state.sendingMonthlyFunds = false;
+    },
+    setIsMonthlyLotteryWinnerPicked: (
+      state,
+      action: PayloadAction<boolean>
+    ) => {
+      state.monthlyWinnerIsPicked = action.payload;
     },
   },
 });

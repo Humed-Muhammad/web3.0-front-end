@@ -32,6 +32,7 @@ function* checkIfWalletIsConnectedSaga() {
 
     if (!accounts.length) {
       yield put(actions.setConnectedWallet(""));
+      yield put(actions.setIsWalletIsConnected(false));
       yield put(
         actions.setMessages({
           content: "Please connect your wallet to continue",
@@ -41,6 +42,7 @@ function* checkIfWalletIsConnectedSaga() {
     } else {
       yield put(actions.setConnectedWallet(accounts[0]));
       yield put(actions.getDefaultData());
+      yield put(actions.setIsWalletIsConnected(true));
       yield put(
         actions.setMessages({
           content: "",

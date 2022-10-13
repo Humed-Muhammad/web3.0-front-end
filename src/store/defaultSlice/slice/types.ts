@@ -34,7 +34,8 @@ export interface DefaultSliceTypes {
   defaultLotteryDatas: DefaultLotteryTypes;
   // contractAddress: string;
   abi: JSON | undefined;
-  connectedAccount: string;
+  connectedAccount: string | undefined;
+  isWalletConnected: boolean;
   fetchingDatas: boolean;
   gettingContarct: boolean;
   dailyContract: Omit<Contract, "none"> | undefined;

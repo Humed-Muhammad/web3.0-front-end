@@ -37,9 +37,11 @@ export const formatPlayers = (players: []) => {
   return formatedPlayers;
 };
 
-export const formatEther = (value: BigNumber) => {
-  const result = ethers.utils.formatEther(value?._hex);
-  return result;
+export const formatEther = (value: BigNumber | undefined) => {
+  if (value) {
+    const result = ethers.utils.formatEther(value?._hex);
+    return result;
+  }
 };
 
 export interface GetLotteryResponseType {
@@ -80,7 +82,7 @@ export const calculatePriceCuts = (
 ) => {
   if (tobeCutted && cuttingAmount) {
     const result =
-      Number(tobeCutted) - (Number(tobeCutted) * cuttingAmount) / 100;
+      Number(tobeCutted) - Number(tobeCutted) * (cuttingAmount / 100);
     return result;
   }
 };
