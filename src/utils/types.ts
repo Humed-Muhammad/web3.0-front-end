@@ -36,4 +36,5 @@ export interface DetailCardProps extends BoxProps {
   isWinnerPicked: boolean;
   winnerAddress: string | undefined;
   amountWinned: BigNumber | undefined;
+  isMining: boolean;
 }

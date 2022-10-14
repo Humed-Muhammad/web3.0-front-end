@@ -1,4 +1,12 @@
-import { Box, Button, Center, Heading, Image, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Heading,
+  Image,
+  Link,
+  Text,
+} from "@chakra-ui/react";
 import React from "react";
 import { scatterdBg } from "../assets/images";
 import { fonts } from "../utils/theme";
@@ -8,7 +16,13 @@ interface Props {
 }
 export const Winner = ({ winnerAddress }: Props) => {
   return (
-    <Center position="relative" mb="6" justifyContent="space-between">
+    <Center
+      overflow="hidden"
+      w="100%"
+      position="relative"
+      mb="6"
+      justifyContent="space-between"
+    >
       <Box zIndex="10">
         <Heading
           bgClip="text"
@@ -19,7 +33,15 @@ export const Winner = ({ winnerAddress }: Props) => {
         >
           Winner
         </Heading>
-        <Text fontWeight="medium">{winnerAddress}</Text>
+        <Text
+          variant="truncated"
+          w="60%"
+          lineHeight="10"
+          fontFamily={fonts.Montserrat}
+          fontWeight="medium"
+        >
+          {winnerAddress}
+        </Text>
       </Box>
       <Button
         px="8"
@@ -29,7 +51,13 @@ export const Winner = ({ winnerAddress }: Props) => {
         colorScheme="facebook"
         bg="#14113D"
       >
-        Link
+        <Link
+          href={`https://goerli.etherscan.io/address/${winnerAddress}`}
+          target="_blank"
+          color="inherit"
+        >
+          Link
+        </Link>
       </Button>
       <Image
         objectFit="contain"

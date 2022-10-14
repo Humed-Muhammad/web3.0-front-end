@@ -1,19 +1,14 @@
-import { put, select, takeLatest } from "redux-saga/effects";
+import { put, takeLatest } from "redux-saga/effects";
 import { actions } from "../slice";
-import { BigNumber, Contract, ethers, Signer } from "ethers";
+import { ethers, Signer } from "ethers";
 
 import { ethereum, LOTTERY_TYPE } from "../../../utils/constants";
-import { selectContract } from "../slice/selector";
-import {
-  formatEther,
-  formatPlayers,
-  getLotteryData,
-} from "../../../utils/helpers";
+
+import { getLotteryData } from "../../../utils/helpers";
 import makeCall from "../../../API/makeCalls";
 import { FetchedApiRespose } from "../../commonTypes";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { GetLotteryTypeRes } from "../../../utils/types";
-import { RootState } from "../..";
 
 /* This function is responsible for checking if the user has connected their wallet. */
 function* checkIfWalletIsConnectedSaga() {
@@ -186,20 +181,35 @@ function* updateSingleLotterySaga(
   action: PayloadAction<keyof typeof LOTTERY_TYPE>
 ) {
   try {
-    const contract: Contract = yield select((state: RootState) =>
-      selectContract(state, action.payload)
-    );
-    const players: [] = yield contract?.getPlayers();
-    const lotteryBalance: BigNumber = yield contract?.getBalance();
-    const bettingValue: BigNumber = yield contract?.bettingValue();
+    const response: FetchedApiRespose = yield makeCall({
+      method: "GET",
+      route: "",
+      isSecureRoute: true,
+    });
+    const provider: { getSigner: () => object } =
+      yield new ethers.providers.Web3Provider(ethereum);
 
-    const formatedDailyPlayers = formatPlayers(players);
+    /* Getting the signer from the provider. */
+    const signer: Signer = yield provider.getSigner();
+    /***@SingleLotteryData */
+    const lotteryData: GetLotteryTypeRes = yield getLotteryData({
+      lotteryData: response,
+      signer: signer,
+      type: action.payload,
+    });
+
     yield put(
       actions.setUpdateSingleLottery({
         data: {
-          lotteryPrize: formatEther(lotteryBalance),
-          players: formatedDailyPlayers,
-          currentBettingValue: formatEther(bettingValue),
+          currentBettingValue: lotteryData.bettingValue,
+          lotteryPrize: lotteryData.lotteryPrize,
+          players: lotteryData.players,
+          updatedAt: lotteryData.lotteryFromDB?.updatedAt,
+          type: action.payload,
+          count: lotteryData.lotteryFromDB?.count,
+          priceCut: lotteryData.lotteryFromDB?.priceCut,
+          gasCut: lotteryData.lotteryFromDB?.gasCut,
+          initialPotValue: lotteryData.lotteryFromDB?.initialPotValue,
         },
         type: action.payload,
       })

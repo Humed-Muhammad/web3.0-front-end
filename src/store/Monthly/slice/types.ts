@@ -1,4 +1,5 @@
 export interface WeeklyLotteryTypes {
-  sendingMonthlyFunds: boolean;
+  bettingMonthlyLottery: boolean;
   monthlyWinnerIsPicked: boolean;
+  miningMonthlyLottery: boolean;
 }

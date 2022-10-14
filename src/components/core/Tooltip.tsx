@@ -1,11 +1,10 @@
-import { Tooltip } from "@chakra-ui/react";
+import { Tooltip, TooltipProps } from "@chakra-ui/react";
 import React from "react";
 
-interface Props {
+interface Props extends TooltipProps {
   children: JSX.Element[] | JSX.Element;
-  value: string | number | undefined;
 }
-export const TooltipHolder = ({ children, value }: Props) => {
+export const TooltipHolder = ({ children, ...rest }: Props) => {
   return (
     <Tooltip
       textAlign="center"
@@ -13,7 +12,7 @@ export const TooltipHolder = ({ children, value }: Props) => {
       py="1"
       bg="primary"
       placement="top-start"
-      label={value}
+      {...rest}
       hasArrow
     >
       {children}

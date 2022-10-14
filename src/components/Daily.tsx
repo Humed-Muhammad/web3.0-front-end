@@ -13,6 +13,7 @@ import { actions as dailyActions } from "../store/Daily/slice";
 import {
   selectDailySendingFunds,
   selectIfDailyLotteryWinnerIsSelected,
+  selectIsDailyMining,
 } from "../store/Daily/slice/selector";
 import { addMinutes } from "date-fns";
 import { BigNumber } from "ethers";
@@ -28,6 +29,7 @@ export const Daily = () => {
   const dispatch = useDispatch();
   const { daily } = useSelector(selectLotteryDatas);
   const isSendingFunds = useSelector(selectDailySendingFunds);
+  const isMining = useSelector(selectIsDailyMining);
   const isDailyWinnerPicked = useSelector(selectIfDailyLotteryWinnerIsSelected);
   const contract = useSelector((state: RootState) =>
     selectContract(state, LOTTERY_TYPE.daily)
@@ -38,24 +40,41 @@ export const Daily = () => {
     contract?.on("LogPlayers", () => {
       dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.daily));
     });
-    contract?.on("LogWinner", (player: string, amountWinned: BigNumber) => {
-      setWinnerData({
-        address: player,
-        amount: amountWinned,
-      });
-      dispatch(dailyActions.setIsDailyLotteryWinnerPicked(true));
-      dispatch(defaultActions.updateTime("daily"));
+    contract?.on("LogResetTimer", () => {
       dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.daily));
+    });
+    contract?.on("LogWinner", (player: string, amountWinned: BigNumber) => {
       dispatch(
         defaultActions.setMessages({
           content: `Daily winner is picked ${player}`,
           type: "success",
         })
       );
+      setWinnerData({
+        address: player,
+        amount: amountWinned,
+      });
+
+      dispatch(dailyActions.setIsDailyLotteryWinnerPicked(true));
+      dispatch(defaultActions.updateTime("daily"));
+      dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.daily));
+
       setTimeout(() => {
         dispatch(dailyActions.setIsDailyLotteryWinnerPicked(false));
-      }, 5000);
+      }, 30000);
     });
+    return () => {
+      dispatch(
+        defaultActions.setMessages({
+          content: "",
+          type: null,
+        })
+      );
+      setWinnerData({
+        address: "",
+        amount: undefined,
+      });
+    };
   }, [contract]);
   return (
     <DetailCard
@@ -80,6 +99,7 @@ export const Daily = () => {
       isWinnerPicked={isDailyWinnerPicked}
       amountWinned={winnerData.amount}
       winnerAddress={winnerData.address}
+      isMining={isMining}
     />
   );
 };

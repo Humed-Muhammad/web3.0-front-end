@@ -3,10 +3,7 @@ import { actions } from "../slice";
 import { actions as defaultActions } from "../../defaultSlice/slice";
 import { BigNumber, ethers, ContractTransaction, Contract } from "ethers";
 
-import {
-  ContractListTypes,
-  DefaultLotteryTypes,
-} from "../../defaultSlice/slice/types";
+import { DefaultLotteryTypes } from "../../defaultSlice/slice/types";
 import {
   selectConnectedAccount,
   selectContract,
@@ -30,27 +27,30 @@ function* sendingDailyFundsSaga() {
     const defaultLotteryData: DefaultLotteryTypes = yield select(
       selectLotteryDatas
     );
+
     const parsedAmount: BigNumber = yield ethers.utils.parseEther(
       `${defaultLotteryData.daily?.currentBettingValue}`
     );
-
-    console.log(dailyContract);
     const transactionResponse: ContractTransaction = yield dailyContract?.bet({
       from: connectedAccount,
       value: parsedAmount,
       gasLimit: 300000,
     });
+    yield put(actions.finishedBetting());
+    yield put(actions.setMiningDailyLottery(true));
+
     yield transactionResponse.wait();
     if (transactionResponse) {
-      yield put(actions.finishedSendingFunds());
       yield put(
         defaultActions.setMessages({
           content: "Your transaction was successfully transfered.",
           type: "success",
         })
       );
+      yield put(actions.setMiningDailyLottery(false));
     }
   } catch (error: any) {
+    console.log(error);
     if (!connectedAccount) {
       yield put(
         defaultActions.setMessages({
@@ -69,12 +69,12 @@ function* sendingDailyFundsSaga() {
     } else {
       yield put(
         defaultActions.setMessages({
-          content: error.message,
+          content: "Something went wrong transaction reverted!",
           type: "error",
         })
       );
     }
-    yield put(actions.finishedSendingFunds());
+    yield put(actions.finishedBetting());
   }
 }
 

@@ -8,7 +8,6 @@ import {
   Flex,
   Divider,
   Image,
-  Center,
   useToast,
 } from "@chakra-ui/react";
 import { bg, token } from "../assets/images";

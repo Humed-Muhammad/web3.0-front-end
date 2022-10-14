@@ -36,9 +36,11 @@ function* sendingWeeklyFundsSaga() {
       value: parsedAmount,
       gasLimit: 300000,
     });
+    yield put(actions.finishedBetting());
+    yield put(actions.setMiningWeeklyLottery(true));
     yield transactionResponse.wait();
     if (transactionResponse) {
-      yield put(actions.finishedSendingFunds());
+      yield put(actions.setMiningWeeklyLottery(false));
       yield put(
         defaultActions.setMessages({
           content: "Your transaction was successfully transfered.",
@@ -65,12 +67,12 @@ function* sendingWeeklyFundsSaga() {
     } else {
       yield put(
         defaultActions.setMessages({
-          content: error.message,
+          content: "Something went wrong transaction reverted!",
           type: "error",
         })
       );
     }
-    yield put(actions.finishedSendingFunds());
+    yield put(actions.finishedBetting());
   }
 }
 

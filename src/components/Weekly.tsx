@@ -12,6 +12,7 @@ import { actions as defaultActions } from "../store/defaultSlice/slice";
 import { actions as weeklyActions } from "../store/Weekly/slice";
 import {
   selectIfWeeklyLotteryWinnerIsSelected,
+  selectIsWeeklyMining,
   selectWeeklySendingFunds,
 } from "../store/Weekly/slice/selector";
 import { addHours } from "date-fns";
@@ -28,6 +29,7 @@ export const Weekly = () => {
 
   const dispatch = useDispatch();
   const { weekly } = useSelector(selectLotteryDatas);
+  const isMining = useSelector(selectIsWeeklyMining);
   const isSendingFunds = useSelector(selectWeeklySendingFunds);
   const isWeeklyWinnerPicked = useSelector(
     selectIfWeeklyLotteryWinnerIsSelected
@@ -57,7 +59,7 @@ export const Weekly = () => {
       );
       setTimeout(() => {
         dispatch(weeklyActions.setIsWeeklyLotteryWinnerPicked(false));
-      }, 5000);
+      }, 30000);
     });
   }, [contract]);
   return (
@@ -81,6 +83,7 @@ export const Weekly = () => {
       isWinnerPicked={isWeeklyWinnerPicked}
       amountWinned={winnerData.amount}
       winnerAddress={winnerData.address}
+      isMining={isMining}
     />
   );
 };

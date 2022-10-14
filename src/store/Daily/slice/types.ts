@@ -1,4 +1,5 @@
 export interface DailyLotteryTypes {
-  sendingFunds: boolean;
+  bettingDailyLottery: boolean;
+  miningDailyLottery: boolean;
   dailyWinnerIsPicked: boolean;
 }

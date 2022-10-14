@@ -5,7 +5,7 @@ import { RootState } from "../..";
 const selectLottery = (state: RootState) => state.weeklyReducer;
 
 export const selectWeeklySendingFunds: (state: RootState) => boolean =
-  createSelector([selectLottery], (state) => state.sendingWeeklyFunds);
+  createSelector([selectLottery], (state) => state.bettingWeeklyLottery);
 
 export const selectIfWeeklyLotteryWinnerIsSelected: (
   state: RootState
@@ -13,3 +13,6 @@ export const selectIfWeeklyLotteryWinnerIsSelected: (
   [selectLottery],
   (state) => state.weeklyWinnerIsPicked
 );
+
+export const selectIsWeeklyMining: (state: RootState) => boolean =
+  createSelector([selectLottery], (state) => state.miningWeeklyLottery);

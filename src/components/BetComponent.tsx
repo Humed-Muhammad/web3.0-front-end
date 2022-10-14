@@ -3,8 +3,6 @@ import {
   Button,
   Center,
   Heading,
-  Highlight,
-  IconButton,
   ListItem,
   Skeleton,
   Text,
@@ -35,6 +33,7 @@ export const BetComponent = ({
   priceCut,
   isWinnerPicked,
   amountWinned,
+  isMining,
 }: DetailCardProps) => {
   const lottieOption = {
     loop: true,
@@ -48,9 +47,10 @@ export const BetComponent = ({
     <Box
       px={["2", "50px"]}
       pt="45px"
+      pb="35px"
       position="relative"
       w={["99%", "95%", "70%", "410px"]}
-      h={["499px"]}
+      h={["auto"]}
       bg="lightGray"
       shadow="md"
       rounded="md"
@@ -68,7 +68,7 @@ export const BetComponent = ({
         fontWeight="bold"
         roundedBottom="base"
       >
-        <TooltipHolder value={`${currentBettingValue} ETH`}>
+        <TooltipHolder label={`${currentBettingValue} ETH`}>
           <Text
             variant="truncated"
             color="white"
@@ -108,7 +108,7 @@ export const BetComponent = ({
           <ListItem display="flex" justifyContent="space-between">
             <Text>Total Amount</Text>
             <Skeleton isLoaded={Boolean(totalAmount)}>
-              <TooltipHolder value={`${totalAmount} ETH`}>
+              <TooltipHolder label={`${totalAmount} ETH`}>
                 <Text
                   px="4"
                   w="24"
@@ -128,11 +128,16 @@ export const BetComponent = ({
           <ListItem display="flex" justifyContent="space-between">
             <Center experimental_spaceX="1">
               <Text>Wining Prize</Text>
-              <HiOutlineQuestionMarkCircle cursor="pointer" />
+              <TooltipHolder label="The winning prize without gas fee!">
+                <Box>
+                  {" "}
+                  <HiOutlineQuestionMarkCircle cursor="pointer" />
+                </Box>
+              </TooltipHolder>
             </Center>
             <Skeleton isLoaded={Boolean(totalAmount)}>
               <TooltipHolder
-                value={`${calculatePriceCuts(totalAmount, priceCut)} ETH`}
+                label={`${calculatePriceCuts(totalAmount, priceCut)} ETH`}
               >
                 <Text
                   px="4"
@@ -153,7 +158,7 @@ export const BetComponent = ({
           <ListItem display="flex" justifyContent="space-between">
             <Text>Current Betting Value</Text>
             <Skeleton isLoaded={Boolean(currentBettingValue)}>
-              <TooltipHolder value={`${currentBettingValue} ETH`}>
+              <TooltipHolder label={`${currentBettingValue} ETH`}>
                 <Text
                   px="4"
                   w="24"
@@ -191,24 +196,21 @@ export const BetComponent = ({
             textAlign="center"
             lineHeight="8"
           >
-            <Highlight
-              styles={{
-                bgClip: "text",
-                bgGradient:
-                  "linear-gradient(180deg, #BE4DFA 16%, #33D1FA 90%);",
-                display: "block",
-                fontWeight: "extrabold",
-                fontSize: ["24px"],
-              }}
-              query={["4 ETH"]}
+            Winner prize
+            <Text
+              bgClip="text"
+              bgGradient="linear-gradient(180deg, #BE4DFA 16%, #33D1FA 90%)"
+              display="block"
+              fontWeight="extrabold"
+              fontSize={["24px"]}
             >
-              {` Winner prize 4 ETH`}
-            </Highlight>
+              {formatEther(amountWinned)} ETH
+            </Text>
           </Heading>
         ) : (
           <Button
-            isLoading={isSendingFunds}
-            loadingText="Sending..."
+            isLoading={isSendingFunds ? isSendingFunds : isMining}
+            loadingText={isMining ? "Mining..." : "Sending..."}
             onClick={sendFund}
             variant="primary"
           >

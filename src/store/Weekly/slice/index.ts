@@ -2,8 +2,9 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { WeeklyLotteryTypes } from "./types";
 
 const initialState: WeeklyLotteryTypes = {
-  sendingWeeklyFunds: false,
+  bettingWeeklyLottery: false,
   weeklyWinnerIsPicked: false,
+  miningWeeklyLottery: false,
 };
 
 export const weeklySlice = createSlice({
@@ -11,13 +12,16 @@ export const weeklySlice = createSlice({
   initialState,
   reducers: {
     sendWeeklyFunds: (state) => {
-      state.sendingWeeklyFunds = true;
+      state.bettingWeeklyLottery = true;
     },
-    finishedSendingFunds: (state) => {
-      state.sendingWeeklyFunds = false;
+    finishedBetting: (state) => {
+      state.bettingWeeklyLottery = false;
     },
     setIsWeeklyLotteryWinnerPicked: (state, action: PayloadAction<boolean>) => {
       state.weeklyWinnerIsPicked = action.payload;
+    },
+    setMiningWeeklyLottery: (state, action: PayloadAction<boolean>) => {
+      state.miningWeeklyLottery = action.payload;
     },
   },
 });

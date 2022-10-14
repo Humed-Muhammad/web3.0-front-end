@@ -12,6 +12,7 @@ import { actions as defaultActions } from "../store/defaultSlice/slice";
 import { actions as monthlyActions } from "../store/Monthly/slice";
 import {
   selectIfMonthlyLotteryWinnerIsSelected,
+  selectIsMonthlyMining,
   selectMonthlySendingFunds,
 } from "../store/Monthly/slice/selector";
 import { addDays } from "date-fns";
@@ -27,6 +28,7 @@ export const Monthly = () => {
   });
   const dispatch = useDispatch();
   const { monthly } = useSelector(selectLotteryDatas);
+  const isMining = useSelector(selectIsMonthlyMining);
   const isSendingFunds = useSelector(selectMonthlySendingFunds);
   const isMonthlyWinnerPicked = useSelector(
     selectIfMonthlyLotteryWinnerIsSelected
@@ -56,7 +58,7 @@ export const Monthly = () => {
       );
       setTimeout(() => {
         dispatch(monthlyActions.setIsMonthlyLotteryWinnerPicked(false));
-      }, 5000);
+      }, 30000);
     });
   }, [contract]);
   return (
@@ -80,6 +82,7 @@ export const Monthly = () => {
       isWinnerPicked={isMonthlyWinnerPicked}
       amountWinned={winnerData.amount}
       winnerAddress={winnerData.address}
+      isMining={isMining}
     />
   );
 };

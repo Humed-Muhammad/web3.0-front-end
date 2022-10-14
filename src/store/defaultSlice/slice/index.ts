@@ -102,11 +102,7 @@ export const defaultSlice = createSlice({
         type: "daily" | "weekly" | "monthly";
       }>
     ) => {
-      state.defaultLotteryDatas[action.payload.type] = {
-        ...state.defaultLotteryDatas[action.payload.type],
-        lotteryPrize: action.payload.data.lotteryPrize,
-        players: action.payload.data.players,
-      };
+      state.defaultLotteryDatas[action.payload.type] = action.payload.data;
     },
     getWinners: (
       state,
