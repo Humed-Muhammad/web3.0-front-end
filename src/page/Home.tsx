@@ -249,7 +249,7 @@ export const Home = () => {
           h="auto"
           w="full"
           top="-6"
-          position={["initial", "initial", "absolute"]}
+          position={["initial", "initial", "initial", "absolute"]}
         >
           <Daily />
         </Flex>

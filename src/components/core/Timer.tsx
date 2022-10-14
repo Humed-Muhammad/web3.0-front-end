@@ -45,25 +45,25 @@ export const Timer = ({
       // Render a countdown
       return (
         <>
-          <Skeleton w="12" isLoaded={!isLoading && isWalletConnected}>
+          <Skeleton w={["10", "12"]} isLoaded={!isLoading && isWalletConnected}>
             <TimeList showSeparate text="Days" time={days} />
           </Skeleton>
           <Center>
             <p>:</p>
           </Center>
-          <Skeleton w="12" isLoaded={!isLoading && isWalletConnected}>
+          <Skeleton w={["10", "12"]} isLoaded={!isLoading && isWalletConnected}>
             <TimeList showSeparate text="Hours" time={hours} />
           </Skeleton>
           <Center>
             <p>:</p>
           </Center>
-          <Skeleton w="12" isLoaded={!isLoading && isWalletConnected}>
+          <Skeleton w={["10", "12"]} isLoaded={!isLoading && isWalletConnected}>
             <TimeList showSeparate text="Minutes" time={minutes} />
           </Skeleton>
           <Center>
             <p>:</p>
           </Center>
-          <Skeleton w="12" isLoaded={!isLoading && isWalletConnected}>
+          <Skeleton w={["10", "12"]} isLoaded={!isLoading && isWalletConnected}>
             <TimeList text="Seconds" time={seconds} />
           </Skeleton>
         </>
