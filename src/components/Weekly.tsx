@@ -40,7 +40,11 @@ export const Weekly = () => {
   const { fetchingDatas } = useSelector(selectAllDefaultLottery);
 
   useEffect(() => {
+    let timeOut: number;
     contract?.on("LogPlayers", () => {
+      dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.weekly));
+    });
+    contract?.on("LogResetTimer", () => {
       dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.weekly));
     });
     contract?.on("LogWinner", (player: string, amountWinned: BigNumber) => {
@@ -57,10 +61,23 @@ export const Weekly = () => {
           type: "success",
         })
       );
-      setTimeout(() => {
+      timeOut = setTimeout(() => {
         dispatch(weeklyActions.setIsWeeklyLotteryWinnerPicked(false));
-      }, 30000);
+        dispatch(
+          defaultActions.setMessages({
+            content: "",
+            type: null,
+          })
+        );
+        setWinnerData({
+          address: "",
+          amount: undefined,
+        });
+      }, 10000);
     });
+    return () => {
+      clearTimeout(timeOut);
+    };
   }, [contract]);
   return (
     <DetailCard

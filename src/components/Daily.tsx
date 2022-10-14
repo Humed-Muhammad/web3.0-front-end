@@ -37,6 +37,7 @@ export const Daily = () => {
   const { fetchingDatas } = useSelector(selectAllDefaultLottery);
 
   useEffect(() => {
+    let timeOut: number;
     contract?.on("LogPlayers", () => {
       dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.daily));
     });
@@ -44,36 +45,35 @@ export const Daily = () => {
       dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.daily));
     });
     contract?.on("LogWinner", (player: string, amountWinned: BigNumber) => {
+      setWinnerData({
+        address: player,
+        amount: amountWinned,
+      });
+      dispatch(dailyActions.setIsDailyLotteryWinnerPicked(true));
+      dispatch(defaultActions.updateTime("daily"));
+      dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.daily));
       dispatch(
         defaultActions.setMessages({
           content: `Daily winner is picked ${player}`,
           type: "success",
         })
       );
-      setWinnerData({
-        address: player,
-        amount: amountWinned,
-      });
-
-      dispatch(dailyActions.setIsDailyLotteryWinnerPicked(true));
-      dispatch(defaultActions.updateTime("daily"));
-      dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.daily));
-
-      setTimeout(() => {
+      timeOut = setTimeout(() => {
         dispatch(dailyActions.setIsDailyLotteryWinnerPicked(false));
-      }, 30000);
+        dispatch(
+          defaultActions.setMessages({
+            content: "",
+            type: null,
+          })
+        );
+        setWinnerData({
+          address: "",
+          amount: undefined,
+        });
+      }, 10000);
     });
     return () => {
-      dispatch(
-        defaultActions.setMessages({
-          content: "",
-          type: null,
-        })
-      );
-      setWinnerData({
-        address: "",
-        amount: undefined,
-      });
+      clearTimeout(timeOut);
     };
   }, [contract]);
   return (

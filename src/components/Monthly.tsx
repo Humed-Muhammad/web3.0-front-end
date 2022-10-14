@@ -39,7 +39,11 @@ export const Monthly = () => {
   const { fetchingDatas } = useSelector(selectAllDefaultLottery);
 
   useEffect(() => {
+    let timeOut: number;
     contract?.on("LogPlayers", () => {
+      dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.monthly));
+    });
+    contract?.on("LogResetTimer", () => {
       dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.monthly));
     });
     contract?.on("LogWinner", (player: string, amountWinned: BigNumber) => {
@@ -56,10 +60,23 @@ export const Monthly = () => {
           type: "success",
         })
       );
-      setTimeout(() => {
+      timeOut = setTimeout(() => {
         dispatch(monthlyActions.setIsMonthlyLotteryWinnerPicked(false));
-      }, 30000);
+        dispatch(
+          defaultActions.setMessages({
+            content: "",
+            type: null,
+          })
+        );
+        setWinnerData({
+          address: "",
+          amount: undefined,
+        });
+      }, 10000);
     });
+    return () => {
+      clearTimeout(timeOut);
+    };
   }, [contract]);
   return (
     <DetailCard

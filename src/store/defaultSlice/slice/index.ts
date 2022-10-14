@@ -99,7 +99,7 @@ export const defaultSlice = createSlice({
       state,
       action: PayloadAction<{
         data: CommonDefaultDataTypes;
-        type: "daily" | "weekly" | "monthly";
+        type: keyof typeof LOTTERY_TYPE;
       }>
     ) => {
       state.defaultLotteryDatas[action.payload.type] = action.payload.data;

@@ -34,7 +34,7 @@ function* sendingWeeklyFundsSaga() {
     const transactionResponse: ContractTransaction = yield weeklyContract?.bet({
       from: connectedAccount,
       value: parsedAmount,
-      gasLimit: 300000,
+      gasLimit: 100000,
     });
     yield put(actions.finishedBetting());
     yield put(actions.setMiningWeeklyLottery(true));

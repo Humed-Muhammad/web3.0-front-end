@@ -35,7 +35,7 @@ function* sendingMonthlyFundsSaga() {
       {
         from: connectedAccount,
         value: parsedAmount,
-        gasLimit: 300000,
+        gasLimit: 100000,
       }
     );
     yield put(actions.finishedBetting());
@@ -74,6 +74,7 @@ function* sendingMonthlyFundsSaga() {
         })
       );
     }
+    yield put(actions.setMiningMonthlyLottery(false));
     yield put(actions.finishedBetting());
   }
 }

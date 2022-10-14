@@ -1,0 +1,13 @@
+version: '3.3'
+
+services:
+  lottery-frontend:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: lottery-frontend:latest
+    container_name: lottery-frontend-container
+    restart: unless-stopped
+    ports:
+      - 3002:3002
+    #network_mode: host

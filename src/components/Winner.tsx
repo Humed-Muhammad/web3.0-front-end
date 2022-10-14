@@ -17,10 +17,11 @@ interface Props {
 export const Winner = ({ winnerAddress }: Props) => {
   return (
     <Center
-      overflow="hidden"
+      overflow="visible"
       w="100%"
       position="relative"
       mb="6"
+      h="20"
       justifyContent="space-between"
     >
       <Box zIndex="10">
@@ -60,7 +61,7 @@ export const Winner = ({ winnerAddress }: Props) => {
         </Link>
       </Button>
       <Image
-        objectFit="contain"
+        objectFit="cover"
         position="absolute"
         src={scatterdBg}
         alt="scatterd confetti"

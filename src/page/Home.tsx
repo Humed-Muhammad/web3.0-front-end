@@ -37,7 +37,7 @@ export const Home = () => {
   useEffect(() => {
     dispatch(defaultActions.checkIfWalletIsConnected());
 
-    ethereum.on("accountsChanged", () => {
+    ethereum?.on("accountsChanged", () => {
       dispatch(defaultActions.checkIfWalletIsConnected());
     });
   }, [ethereum]);
@@ -90,10 +90,14 @@ export const Home = () => {
         direction="column"
         align="center"
         bgImage={bg}
-        h="93vh"
+        h={["auto", "auto", "auto", "93vh"]}
         position="relative"
         backgroundPosition="center"
         overflowX="hidden"
+        py={["24"]}
+        bgPosition="top"
+        bgRepeat="no-repeat"
+        bg="black"
       >
         <Text
           fontWeight="bold"
@@ -118,30 +122,30 @@ export const Home = () => {
         </Text>
 
         <Flex
-          w={["80%", "62%"]}
-          justify={["center", "center", "initial"]}
+          w={["80%", "80%", "75%", "62%"]}
+          justify={["center", "center", "center", "initial"]}
           align="center"
         >
           <Flex
-            align={["center", "center", "flex-start"]}
+            align={["center", "center", "center", "flex-start"]}
             flexDirection="column"
             mt="5"
-            w={["96"]}
+            w={["full"]}
           >
             <Heading
               fontFamily={fonts.Montserrat}
               color="white"
               as="h1"
-              fontSize={["4xl", "96px"]}
+              fontSize={["3xl", "4xl", "7xl", "96px"]}
               fontWeight="normal"
-              lineHeight={["60px", "90px"]}
+              lineHeight={["60px", "40px", "90px"]}
             >
               <Highlight
                 query="Smart"
                 styles={{
                   fontSize: "inherit",
                   color: "white",
-                  display: ["initial", "block"],
+                  display: ["initial", "inline", "inline", "block"],
                   fontWeight: "bold",
                 }}
               >
@@ -228,6 +232,7 @@ export const Home = () => {
             display={["none", null, null, "initial"]}
             src={token}
             alt="token coin"
+            width={["48", "56", "44", "initial"]}
           />
         </Flex>
       </SectionContainer>
