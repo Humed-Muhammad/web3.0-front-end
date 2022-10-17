@@ -16,7 +16,7 @@ export const CopyToClipboard = ({ value }: Props) => {
         onClick={() => {
           copyToClipboard(value);
         }}
-        bg="white"
+        bg="transparent"
         color="gray.600"
         rounded="full"
         aria-label="copy to clipboard"
