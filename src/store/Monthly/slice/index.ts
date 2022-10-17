@@ -7,8 +7,8 @@ const initialState: WeeklyLotteryTypes = {
   miningMonthlyLottery: false,
 };
 
-export const weeklySlice = createSlice({
-  name: "counter",
+export const monthly = createSlice({
+  name: "monthly",
   initialState,
   reducers: {
     sendMonthlyFunds: (state) => {
@@ -30,6 +30,6 @@ export const weeklySlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const actions = weeklySlice.actions;
+export const actions = monthly.actions;
 
-export const monthlyReducer = weeklySlice.reducer;
+export const monthlyReducer = monthly.reducer;

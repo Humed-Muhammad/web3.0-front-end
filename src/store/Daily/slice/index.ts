@@ -8,7 +8,7 @@ const initialState: DailyLotteryTypes = {
 };
 
 export const dailySlice = createSlice({
-  name: "counter",
+  name: "daily",
   initialState,
   reducers: {
     sendDailyFunds: (state) => {

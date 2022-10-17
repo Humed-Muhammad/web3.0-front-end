@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import {
@@ -8,7 +8,6 @@ import {
 } from "../store/defaultSlice/slice/selector";
 import { LOTTERY_TYPE, LOTTERY_TYPE_TITLE } from "../utils/constants";
 import { DetailCard } from "./DetailCard";
-import { actions as defaultActions } from "../store/defaultSlice/slice";
 import { actions as dailyActions } from "../store/Daily/slice";
 import {
   selectDailySendingFunds,
@@ -17,6 +16,7 @@ import {
 } from "../store/Daily/slice/selector";
 import { addMinutes } from "date-fns";
 import { BigNumber } from "ethers";
+import { useEventListener } from "../utils/customHooks";
 
 export const Daily = () => {
   const [winnerData, setWinnerData] = useState<{
@@ -35,47 +35,12 @@ export const Daily = () => {
     selectContract(state, LOTTERY_TYPE.daily)
   );
   const { fetchingDatas } = useSelector(selectAllDefaultLottery);
-
-  useEffect(() => {
-    let timeOut: number;
-    contract?.on("LogPlayers", () => {
-      dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.daily));
-    });
-    contract?.on("LogResetTimer", () => {
-      dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.daily));
-    });
-    contract?.on("LogWinner", (player: string, amountWinned: BigNumber) => {
-      setWinnerData({
-        address: player,
-        amount: amountWinned,
-      });
-      dispatch(dailyActions.setIsDailyLotteryWinnerPicked(true));
-      dispatch(defaultActions.updateTime("daily"));
-      dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.daily));
-      dispatch(
-        defaultActions.setMessages({
-          content: `Daily winner is picked ${player}`,
-          type: "success",
-        })
-      );
-      timeOut = setTimeout(() => {
-        dispatch(dailyActions.setIsDailyLotteryWinnerPicked(false));
-        dispatch(
-          defaultActions.setMessages({
-            content: "",
-            type: null,
-          })
-        );
-        setWinnerData({
-          address: "",
-          amount: undefined,
-        });
-      }, 10000);
-    });
-    return () => {
-      clearTimeout(timeOut);
-    };
-  }, [contract]);
+  useEventListener({
+    contract: contract,
+    setWinnerData: setWinnerData,
+    type: LOTTERY_TYPE.daily,
+    winnerStateDispatcher: dailyActions.setIsDailyLotteryWinnerPicked,
+  });
   return (
     <DetailCard
       w={["6xl", "7xl"]}

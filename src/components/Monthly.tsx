@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import {
@@ -8,7 +8,6 @@ import {
 } from "../store/defaultSlice/slice/selector";
 import { LOTTERY_TYPE, LOTTERY_TYPE_TITLE } from "../utils/constants";
 import { DetailCard } from "./DetailCard";
-import { actions as defaultActions } from "../store/defaultSlice/slice";
 import { actions as monthlyActions } from "../store/Monthly/slice";
 import {
   selectIfMonthlyLotteryWinnerIsSelected,
@@ -17,6 +16,7 @@ import {
 } from "../store/Monthly/slice/selector";
 import { addDays } from "date-fns";
 import { BigNumber } from "ethers";
+import { useEventListener } from "../utils/customHooks";
 
 export const Monthly = () => {
   const [winnerData, setWinnerData] = useState<{
@@ -38,46 +38,12 @@ export const Monthly = () => {
   );
   const { fetchingDatas } = useSelector(selectAllDefaultLottery);
 
-  useEffect(() => {
-    let timeOut: number;
-    contract?.on("LogPlayers", () => {
-      dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.monthly));
-    });
-    contract?.on("LogResetTimer", () => {
-      dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.monthly));
-    });
-    contract?.on("LogWinner", (player: string, amountWinned: BigNumber) => {
-      setWinnerData({
-        address: player,
-        amount: amountWinned,
-      });
-      dispatch(monthlyActions.setIsMonthlyLotteryWinnerPicked(true));
-      dispatch(defaultActions.updateTime("monthly"));
-      dispatch(defaultActions.updateSingleLottery(LOTTERY_TYPE.monthly));
-      dispatch(
-        defaultActions.setMessages({
-          content: `Monthly winner is picked ${player}`,
-          type: "success",
-        })
-      );
-      timeOut = setTimeout(() => {
-        dispatch(monthlyActions.setIsMonthlyLotteryWinnerPicked(false));
-        dispatch(
-          defaultActions.setMessages({
-            content: "",
-            type: null,
-          })
-        );
-        setWinnerData({
-          address: "",
-          amount: undefined,
-        });
-      }, 10000);
-    });
-    return () => {
-      clearTimeout(timeOut);
-    };
-  }, [contract]);
+  useEventListener({
+    contract: contract,
+    setWinnerData: setWinnerData,
+    type: LOTTERY_TYPE.daily,
+    winnerStateDispatcher: monthlyActions.setIsMonthlyLotteryWinnerPicked,
+  });
   return (
     <DetailCard
       currentBettingValue={monthly?.currentBettingValue}

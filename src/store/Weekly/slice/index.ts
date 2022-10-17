@@ -8,7 +8,7 @@ const initialState: WeeklyLotteryTypes = {
 };
 
 export const weeklySlice = createSlice({
-  name: "counter",
+  name: "weekly",
   initialState,
   reducers: {
     sendWeeklyFunds: (state) => {

@@ -49,7 +49,7 @@ export const theme = extendTheme({
     Text: {
       baseStyle: {
         fontWeight: "300",
-        fontFamily: "Poppins",
+        fontFamily: "Poppins, sans-serif",
         fontSize: ["md", "lg", "16px"],
         color: "#14113D",
         transition: "all 0.2s ease-out",
