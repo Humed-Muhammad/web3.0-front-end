@@ -42,7 +42,7 @@ export const Weekly = () => {
   useEventListener({
     contract: contract,
     setWinnerData: setWinnerData,
-    type: LOTTERY_TYPE.daily,
+    type: LOTTERY_TYPE.weekly,
     winnerStateDispatcher: weeklyActions.setIsWeeklyLotteryWinnerPicked,
   });
 

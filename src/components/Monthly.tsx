@@ -41,7 +41,7 @@ export const Monthly = () => {
   useEventListener({
     contract: contract,
     setWinnerData: setWinnerData,
-    type: LOTTERY_TYPE.daily,
+    type: LOTTERY_TYPE.monthly,
     winnerStateDispatcher: monthlyActions.setIsMonthlyLotteryWinnerPicked,
   });
   return (
