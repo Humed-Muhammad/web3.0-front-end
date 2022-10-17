@@ -35,7 +35,7 @@ export const useEventListener = ({
         dispatch(defaultActions.updateTime(type));
         const updatedAt = new Date(parseInt(timestamp._hex) * 1000);
         const updatedAtAdded = add(updatedAt, {
-          seconds: 15,
+          seconds: 25,
         });
 
         const getComparedDate = compareAsc(updatedAtAdded, new Date());
@@ -67,7 +67,7 @@ export const useEventListener = ({
             address: "",
             amount: undefined,
           });
-        }, 10000);
+        }, 20000);
       }
     );
     return () => {
