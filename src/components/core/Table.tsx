@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Center,
   Link,
   Spinner,
   Table,
@@ -16,6 +17,7 @@ import { TableDataTypes } from "../../utils/types";
 import styled from "@emotion/styled";
 import { selectConnectedAccount } from "../../store/defaultSlice/slice/selector";
 import { useSelector } from "react-redux";
+import { CopyToClipboard } from "../CopyToClipboard";
 
 interface Props extends TableProps {
   data: TableDataTypes[] | undefined;
@@ -58,7 +60,14 @@ export const ChakraTable = ({ data, ...rest }: Props) => {
         <Tbody>
           {data?.map((item, index) => (
             <Tr key={index}>
-              <Td w="64">{item.address}</Td>
+              <Td w="64">
+                <Center justifyContent="flex-start">
+                  <Text w="48" variant="truncated">
+                    {item.address}
+                  </Text>
+                  <CopyToClipboard value={item.address} />
+                </Center>
+              </Td>
               <Td>
                 <Link
                   href={`https://goerli.etherscan.io/address/${item.address}`}

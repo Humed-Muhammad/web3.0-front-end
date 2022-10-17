@@ -114,3 +114,38 @@ export const fonts = {
   Poppins: "Poppins",
   Digital: "Digital Numbers Regular",
 };
+
+export const colors = {
+  primary: {
+    default: "#4F52FF",
+    _dark: "white",
+  },
+  secondary: {
+    default: "#24DFF9",
+    _dark: "cyan.500",
+  },
+  tertiary: {
+    default: "#C446F9",
+    _dark: "purple.500",
+  },
+  error: {
+    default: "#FF4621",
+  },
+  success: {
+    default: "#5AB52D",
+  },
+  warning: {
+    default: "#FFE330",
+  },
+  text: {
+    default: "#14113D",
+  },
+  lightGray: {
+    default: "#FBFBFB",
+
+    _dark: "#fff",
+  },
+  meduimGray: {
+    default: "#F5F5F5",
+  },
+};

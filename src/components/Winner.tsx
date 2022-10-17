@@ -10,6 +10,7 @@ import {
 import React from "react";
 import { scatterdBg } from "../assets/images";
 import { fonts } from "../utils/theme";
+import { CopyToClipboard } from "./CopyToClipboard";
 
 interface Props {
   winnerAddress: string | undefined;
@@ -34,15 +35,18 @@ export const Winner = ({ winnerAddress }: Props) => {
         >
           Winner
         </Heading>
-        <Text
-          variant="truncated"
-          w="60%"
-          lineHeight="10"
-          fontFamily={fonts.Montserrat}
-          fontWeight="medium"
-        >
-          {winnerAddress}
-        </Text>
+        <Center justifyContent="flex-start">
+          <Text
+            variant="truncated"
+            w="60%"
+            lineHeight="10"
+            fontFamily={fonts.Montserrat}
+            fontWeight="medium"
+          >
+            {winnerAddress}
+          </Text>
+          <CopyToClipboard value={winnerAddress} />
+        </Center>
       </Box>
       <Button
         px="8"

@@ -10,7 +10,7 @@ export const TooltipHolder = ({ children, ...rest }: Props) => {
       textAlign="center"
       fontSize="sm"
       py="1"
-      bg="primary"
+      bg="gray.600"
       placement="top-start"
       {...rest}
       hasArrow

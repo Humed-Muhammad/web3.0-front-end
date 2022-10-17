@@ -1,5 +1,7 @@
+import { useToast } from "@chakra-ui/react";
 import { format } from "date-fns";
 import { BigNumber, Contract, ethers, Signer } from "ethers";
+import { useState } from "react";
 import { FetchedApiRespose } from "../store/commonTypes";
 import { LOTTERY_TYPE } from "./constants";
 import { TableDataTypes } from "./types";
@@ -85,4 +87,33 @@ export const calculatePriceCuts = (
       Number(tobeCutted) - Number(tobeCutted) * (cuttingAmount / 100);
     return result;
   }
+};
+
+export const useCopyToClipboard = () => {
+  const toast = useToast();
+  const [copyed, setCopyed] = useState(false);
+  const copyToClipboard = (value: string | undefined) => {
+    try {
+      if (value) {
+        navigator.clipboard.writeText(value);
+        setCopyed(true);
+        setTimeout(() => {
+          setCopyed(false);
+        }, 1500);
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      toast({
+        description: "There is noting to copy",
+        status: "error",
+        variant: "left-accent",
+      });
+      setCopyed(false);
+    }
+  };
+  return {
+    copyed,
+    copyToClipboard,
+  };
 };
