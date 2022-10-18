@@ -28,7 +28,6 @@ export const BetComponent = ({
   isSendingFunds,
   sendFund,
   updatedAt,
-  addingFunction,
   timeLimit,
   priceCut,
   isWinnerPicked,
@@ -185,7 +184,6 @@ export const BetComponent = ({
           timeLimit={timeLimit}
           updatedAt={updatedAt}
           uuid4={uuid4()}
-          addingFunction={addingFunction}
           players={players}
           currentBettingValue={currentBettingValue}
         />

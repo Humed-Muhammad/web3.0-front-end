@@ -1,4 +1,5 @@
 import { Center, Flex, Heading, Skeleton, Text } from "@chakra-ui/react";
+import { add, Duration } from "date-fns";
 
 import React from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";
@@ -8,11 +9,10 @@ import { fonts } from "../../utils/theme";
 import { TableDataTypes } from "../../utils/types";
 
 interface Props {
-  timeLimit: number;
+  timeLimit: Duration;
   updatedAt: Date | undefined;
   isLoading: boolean;
   uuid4: string;
-  addingFunction: (startTime: Date, timeLimit: number) => Date;
   players: TableDataTypes[] | undefined;
   currentBettingValue: string | undefined;
 }
@@ -21,7 +21,6 @@ export const Timer = ({
   updatedAt,
   isLoading,
   uuid4,
-  addingFunction,
   players,
   currentBettingValue,
 }: Props) => {
@@ -29,11 +28,11 @@ export const Timer = ({
   const startTime = (updatedAt && new Date(updatedAt)) as Date;
   const isWalletConnected = useSelector(selectIfWalletIsConnected);
   const [endTime, setEndTime] = React.useState<Date | number>(
-    addingFunction(startTime, timeLimit)
+    add(startTime, timeLimit)
   );
   React.useEffect(() => {
     if (startTime && timeLimit) {
-      setEndTime(addingFunction(startTime, timeLimit));
+      setEndTime(add(startTime, timeLimit));
     }
   }, [currentBettingValue, startTime]);
   const renderer = ({

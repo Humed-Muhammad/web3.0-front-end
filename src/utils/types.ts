@@ -1,4 +1,5 @@
 import { BoxProps } from "@chakra-ui/react";
+import { Duration } from "date-fns";
 import { BigNumber, Contract } from "ethers";
 import { FetchedLottery } from "../store/commonTypes";
 import { LOTTERY_TYPE_TITLE } from "./constants";
@@ -28,8 +29,8 @@ export interface DetailCardProps extends BoxProps {
   roundNumber: number | undefined;
   initialPotValue: number | undefined;
   participants: number | undefined;
-  timeLimit: number;
-  addingFunction: (startTime: Date, timeLimit: number) => Date;
+  timeLimit: Duration;
+  // addingFunction: (startTime: Date, timeLimit: number) => Date;
   players: TableDataTypes[] | undefined;
   priceCut: number | undefined;
   gasCut: number | undefined;

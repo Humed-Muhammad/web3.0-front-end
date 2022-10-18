@@ -14,7 +14,6 @@ import {
   selectIsMonthlyMining,
   selectMonthlySendingFunds,
 } from "../store/Monthly/slice/selector";
-import { addDays } from "date-fns";
 import { BigNumber } from "ethers";
 import { useEventListener } from "../utils/customHooks";
 
@@ -56,8 +55,10 @@ export const Monthly = () => {
       roundNumber={monthly?.count}
       updatedAt={monthly?.updatedAt}
       initialPotValue={monthly?.initialPotValue}
-      timeLimit={7}
-      addingFunction={addDays}
+      timeLimit={{
+        days: 7,
+        minutes: 30,
+      }}
       participants={monthly?.players?.length}
       players={monthly?.players}
       priceCut={monthly?.priceCut}

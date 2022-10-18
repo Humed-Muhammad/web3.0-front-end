@@ -14,7 +14,6 @@ import {
   selectIfDailyLotteryWinnerIsSelected,
   selectIsDailyMining,
 } from "../store/Daily/slice/selector";
-import { addMinutes } from "date-fns";
 import { BigNumber } from "ethers";
 import { useEventListener } from "../utils/customHooks";
 
@@ -56,8 +55,9 @@ export const Daily = () => {
       roundNumber={daily?.count}
       updatedAt={daily?.updatedAt}
       participants={daily?.players?.length}
-      addingFunction={addMinutes}
-      timeLimit={20}
+      timeLimit={{
+        minutes: 60,
+      }}
       players={daily?.players}
       priceCut={daily?.priceCut}
       gasCut={daily?.gasCut}

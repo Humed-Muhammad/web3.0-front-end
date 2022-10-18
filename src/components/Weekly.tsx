@@ -14,7 +14,6 @@ import {
   selectIsWeeklyMining,
   selectWeeklySendingFunds,
 } from "../store/Weekly/slice/selector";
-import { addHours } from "date-fns";
 import { BigNumber } from "ethers";
 import { useEventListener } from "../utils/customHooks";
 
@@ -58,8 +57,10 @@ export const Weekly = () => {
       roundNumber={weekly?.count}
       updatedAt={weekly?.updatedAt}
       initialPotValue={weekly?.initialPotValue}
-      timeLimit={24}
-      addingFunction={addHours}
+      timeLimit={{
+        hours: 24,
+        minutes: 15,
+      }}
       participants={weekly?.players?.length}
       players={weekly?.players}
       priceCut={weekly?.priceCut}
