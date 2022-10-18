@@ -23,7 +23,7 @@ export const DetailCard = (props: DetailCardProps) => {
     <Box
       position="relative"
       px={["2", "2", "3", "20"]}
-      bg={["transparent", "transparent", "white"]}
+      bg={["transparent", "transparent", "transparent", "white"]}
       shadow={["none", "md"]}
       w={["full", "full", "full", "7xl"]}
       h={["auto", "auto", "auto", "3xl"]}

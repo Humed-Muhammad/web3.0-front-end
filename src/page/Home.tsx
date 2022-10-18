@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Button,
   Box,
@@ -30,6 +30,9 @@ import { Weekly } from "../components/Weekly";
 import { Monthly } from "../components/Monthly";
 export const Home = () => {
   const toast = useToast();
+  const dailyRef = useRef<HTMLDivElement>(null);
+  const weeklyRef = useRef<HTMLDivElement>(null);
+  const monthlyRef = useRef<HTMLDivElement>(null);
   const connectedAccount = useSelector(selectConnectedAccount);
   const message = useSelector(selectMessage);
   const connectingWallet = useSelector(selectConnectingWallet);
@@ -184,6 +187,9 @@ export const Home = () => {
                 fontWeight={["normal", "bold"]}
                 color="secondary"
                 variant="link"
+                onClick={() => {
+                  dailyRef?.current?.scrollIntoView({ behavior: "smooth" });
+                }}
               >
                 Hourly
               </Button>
@@ -197,6 +203,9 @@ export const Home = () => {
                 fontWeight={["normal", "bold"]}
                 color="secondary"
                 variant="link"
+                onClick={() => {
+                  weeklyRef?.current?.scrollIntoView({ behavior: "smooth" });
+                }}
               >
                 Daily
               </Button>
@@ -210,6 +219,9 @@ export const Home = () => {
                 fontWeight={["normal", "bold"]}
                 color="secondary"
                 variant="link"
+                onClick={() => {
+                  monthlyRef?.current?.scrollIntoView({ behavior: "smooth" });
+                }}
               >
                 Monthly
               </Button>
@@ -238,7 +250,7 @@ export const Home = () => {
       </SectionContainer>
 
       <SectionContainer
-        h={["auto", "auto", "auto", "100vh"]}
+        h={["180vh", "180vh", "180vh", "100vh"]}
         py={["0", "32"]}
         justify="center"
         bg="white"
@@ -249,18 +261,19 @@ export const Home = () => {
           h="auto"
           w="full"
           top="-6"
-          position={["initial", "initial", "initial", "absolute"]}
+          ref={dailyRef}
+          position={["absolute", "absolute", "absolute", "absolute"]}
         >
           <Daily />
         </Flex>
       </SectionContainer>
-      <SectionContainer py="32" justify="center" bg="meduimGray">
+      <Flex ref={weeklyRef} py="32" justify="center" bg="meduimGray">
         <Weekly />
-      </SectionContainer>
+      </Flex>
 
-      <SectionContainer py="32" justify="center" bg="white">
+      <Flex ref={monthlyRef} py="32" justify="center" bg="white">
         <Monthly />
-      </SectionContainer>
+      </Flex>
     </Box>
   );
 };
