@@ -69,6 +69,7 @@ export const theme = extendTheme({
         color: "#FFFFFF",
         fontFamiliy: "Montserrat, sans-serif",
         transition: "all 0.2s ease-out",
+        colorScheme: "blue",
       },
       variants: {
         primary: {
@@ -79,7 +80,7 @@ export const theme = extendTheme({
           fontWeight: "600",
           py: "14px",
           background:
-            " linear-gradient(269.74deg, #24DFF9 0.22%, #C446F9 99.83%)",
+            "linear-gradient(269.74deg, #24DFF9 0.22%, #C446F9 99.83%)",
         },
         large: {
           height: ["49px", "66px"],

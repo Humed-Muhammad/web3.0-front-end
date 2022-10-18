@@ -234,6 +234,9 @@ export const Home = () => {
                   dispatch(defaultActions.requestWalletConnection());
                 }
               }}
+              _hover={{
+                colorScheme: "primary",
+              }}
               variant="large"
             >
               {connectedAccount ? "Connected" : "Connect your wallet"}

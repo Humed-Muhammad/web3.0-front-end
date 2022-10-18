@@ -216,6 +216,10 @@ export const BetComponent = ({
             loadingText={isMining ? "Mining..." : "Sending..."}
             onClick={sendFund}
             variant="primary"
+            colorScheme="primary"
+            _hover={{
+              colorScheme: "primary",
+            }}
           >
             Bet
           </Button>

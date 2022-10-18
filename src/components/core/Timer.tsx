@@ -1,5 +1,4 @@
 import { Center, Flex, Heading, Skeleton, Text } from "@chakra-ui/react";
-import { BigNumber } from "ethers";
 
 import React from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";
