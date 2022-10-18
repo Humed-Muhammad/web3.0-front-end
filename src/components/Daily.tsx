@@ -57,7 +57,7 @@ export const Daily = () => {
       updatedAt={daily?.updatedAt}
       participants={daily?.players?.length}
       addingFunction={addMinutes}
-      timeLimit={60}
+      timeLimit={1.2}
       players={daily?.players}
       priceCut={daily?.priceCut}
       gasCut={daily?.gasCut}

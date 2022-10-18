@@ -34,6 +34,7 @@ export const BetComponent = ({
   isWinnerPicked,
   amountWinned,
   isMining,
+  players,
 }: DetailCardProps) => {
   const lottieOption = {
     loop: true,
@@ -185,6 +186,8 @@ export const BetComponent = ({
           updatedAt={updatedAt}
           uuid4={uuid4()}
           addingFunction={addingFunction}
+          players={players}
+          currentBettingValue={currentBettingValue}
         />
       </Center>
       <Center>

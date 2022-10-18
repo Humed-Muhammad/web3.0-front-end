@@ -1,10 +1,12 @@
 import { Center, Flex, Heading, Skeleton, Text } from "@chakra-ui/react";
+import { BigNumber } from "ethers";
 
 import React from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";
 import { useSelector } from "react-redux";
 import { selectIfWalletIsConnected } from "../../store/defaultSlice/slice/selector";
 import { fonts } from "../../utils/theme";
+import { TableDataTypes } from "../../utils/types";
 
 interface Props {
   timeLimit: number;
@@ -12,6 +14,8 @@ interface Props {
   isLoading: boolean;
   uuid4: string;
   addingFunction: (startTime: Date, timeLimit: number) => Date;
+  players: TableDataTypes[] | undefined;
+  currentBettingValue: string | undefined;
 }
 export const Timer = ({
   timeLimit,
@@ -19,6 +23,8 @@ export const Timer = ({
   isLoading,
   uuid4,
   addingFunction,
+  players,
+  currentBettingValue,
 }: Props) => {
   // const gameLimit = timeLimit;
   const startTime = (updatedAt && new Date(updatedAt)) as Date;
@@ -30,7 +36,7 @@ export const Timer = ({
     if (startTime && timeLimit) {
       setEndTime(addingFunction(startTime, timeLimit));
     }
-  }, [timeLimit, updatedAt]);
+  }, [currentBettingValue, startTime]);
   const renderer = ({
     days,
     hours,
@@ -40,7 +46,12 @@ export const Timer = ({
   }: CountdownRenderProps) => {
     if (completed) {
       // Render a completed state
-      return <Text fontWeight="semibold">Time Endined</Text>;
+      return (
+        <Text fontFamily={fonts.MontserratAlt} fontWeight="semibold">
+          Time Endined{", "}
+          {players?.length ? "Picking The Winner..." : "Setting New Values"}
+        </Text>
+      );
     } else {
       // Render a countdown
       return (
