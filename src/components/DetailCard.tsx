@@ -85,7 +85,7 @@ export const DetailCard = (props: DetailCardProps) => {
           <Divider w="full" borderColor="gray.400" />
           <ListItem display="flex" justifyContent="space-between">
             <Text>Next Round initial pot</Text>
-            <Skeleton isLoaded={!props.isFetchingData}>
+            <Skeleton isLoaded={props.totalAmount ? true : false}>
               <Button variant="small">
                 <TooltipHolder label={`${nextRoundPot} ETH`}>
                   <Text
@@ -94,7 +94,7 @@ export const DetailCard = (props: DetailCardProps) => {
                     fontWeight="inherit"
                     variant="truncated"
                   >
-                    {nextRoundPot} ETH
+                    {nextRoundPot || 0} ETH
                   </Text>
                 </TooltipHolder>
               </Button>
@@ -103,7 +103,7 @@ export const DetailCard = (props: DetailCardProps) => {
           <Divider w="full" borderColor="gray.400" />
           <ListItem display="flex" justifyContent="space-between">
             <Text>Participants</Text>
-            <Skeleton isLoaded={Boolean(!props.isFetchingData)}>
+            <Skeleton isLoaded={Boolean(props.players)}>
               <Button variant="small">
                 <TooltipHolder label={props.participants}>
                   <Text
