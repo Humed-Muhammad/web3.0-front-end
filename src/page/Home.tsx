@@ -87,7 +87,7 @@ export const Home = () => {
     };
   }, [message.content]);
   return (
-    <Box h="auto" w="full" bg="white">
+    <Box w="full" bg="white">
       <SectionContainer
         justify="center"
         direction="column"
@@ -106,7 +106,7 @@ export const Home = () => {
           fontWeight="bold"
           color="white"
           fontFamily={fonts.MontserratAlt}
-          fontSize={["xl", "3xl", "32px"]}
+          fontSize={["xl", "2xl", "3xl", "32px"]}
           position="absolute"
           top={["5", "10"]}
         >
@@ -116,7 +116,7 @@ export const Home = () => {
             styles={{
               bgGradient: "linear-gradient(to-b, #B97AED, #0157A3)",
               bgClip: "text",
-              fontSize: ["3xl", "4xl"],
+              fontSize: ["2xl", "3xl", "4xl"],
               fontWeight: ["medium", "inherit"],
             }}
           >
@@ -253,20 +253,12 @@ export const Home = () => {
       </SectionContainer>
 
       <SectionContainer
-        h={["180vh", "180vh", "180vh", "100vh"]}
-        py={["0", "32"]}
+        py={["0", "0", "0", "32"]}
         justify="center"
         bg="white"
         position="relative"
       >
-        <Flex
-          justify="center"
-          h="auto"
-          w="full"
-          top="-6"
-          ref={dailyRef}
-          position={["absolute", "absolute", "absolute", "absolute"]}
-        >
+        <Flex mt="-6" justify="center" w="full" ref={dailyRef}>
           <Daily />
         </Flex>
       </SectionContainer>
