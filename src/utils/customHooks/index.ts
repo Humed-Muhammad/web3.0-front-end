@@ -22,7 +22,7 @@ export const useEventListener = ({
 }: Props) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    let timeOut: number;
+    let timeOut: any;
     contract?.on("LogPlayers", () => {
       dispatch(defaultActions.updateSingleLottery(type));
     });

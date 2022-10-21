@@ -247,7 +247,8 @@ export const Home = () => {
             display={["none", null, null, "initial"]}
             src={token}
             alt="token coin"
-            width={["48", "56", "44", "initial"]}
+            width={["48", "56", "44", "44", "initial"]}
+            height={["auto"]}
           />
         </Flex>
       </SectionContainer>

@@ -113,7 +113,7 @@ export const fonts = {
   Montserrat: "Montserrat",
   Jost: "Jost",
   Poppins: "Poppins",
-  Digital: "Digital Numbers Regular",
+  Digital: "Digital Numbers Regular, sans serif",
 };
 
 export const colors = {
